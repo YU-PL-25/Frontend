@@ -1,6 +1,6 @@
-# 🖥️ Frontend Project
+# 🖥️ ShuttlePlay Frontend
 
-이 프로젝트는 React 기반으로 개발된 프론트엔드 애플리케이션입니다.  
+이 저장소는 셔틀플레이(ShuttlePlay) 프로젝트의 프론트엔드 파트로, React 기반으로 개발되었습니다.
 
 ---
 
