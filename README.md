@@ -26,7 +26,14 @@ cd Frontend
 npm install
 ```
 
-3. 개발 서버 실행
+3. 프로젝트에서 추가로 사용된 외부 라이브러리 설치
+
+```bash
+npm install bootstrap
+npm install axios
+```
+
+4. 개발 서버 실행
 
 ```bash
 npm start
