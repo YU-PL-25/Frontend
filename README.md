@@ -30,6 +30,7 @@ npm install
 
 ```bash
 npm install bootstrap
+npm install bootstrap-icons
 npm install axios
 ```
 
