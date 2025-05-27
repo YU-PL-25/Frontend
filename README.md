@@ -29,9 +29,10 @@ npm install
 3. 프로젝트에서 추가로 사용된 외부 라이브러리 설치
 
 ```bash
+npm install axios
 npm install bootstrap
 npm install bootstrap-icons
-npm install axios
+npm install react-router-dom
 ```
 
 4. 개발 서버 실행
