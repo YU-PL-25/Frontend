@@ -9,7 +9,7 @@ import ScrollToTopButton from '../components/ScrollToTopButton';
 
 function Landing() {
   return (
-    <>
+    <div className="landing-wrapper">
       <div id="hero"><HeroSection/></div>
       <div id="features"><FeatureSection/></div>
       <div id="cards"><FeatureCards/></div>
@@ -17,7 +17,7 @@ function Landing() {
       <div id="faq"><FaqSection/></div>
       <div id="cta"><CtaSection/></div>
       <ScrollToTopButton/>
-    </>
+    </div>
   );
 }
 
