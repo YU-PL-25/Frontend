@@ -1,10 +1,16 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/App.css';
+import Landing from './pages/Landing';
 
 function App() {
   return (
-    <div className="App">
-      {/* 셔틀플레이 앱 시작 */}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/landing" replace/>}/>
+        <Route path="/landing" element={<Landing/>}/>
+      </Routes>
+    </Router>
   );
 }
 
