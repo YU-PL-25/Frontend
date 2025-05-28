@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #faf8f8;
+}
+
+.login-wrapper {
+  max-width: 550px;
+  margin: 60px auto;
+  padding: 40px 50px;
+  background-color: #fff;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.logo-img {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #333;
+  margin: 10px 0 4px;
+}
+
+.subtitle {
+  font-size: 17px;
+  color: #444;
+  margin-bottom: 24px;
+}
+
+.login-form {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.login-form label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f6f8fa;
+  margin-bottom: 14px;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.find-link {
+  color: #e60023;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: bold;
+  background-color: #AF1AAA;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 28px;
+}
+
+
+.login-btn:active {
+  background-color: #ffc107;  /* 클릭할 때도 색 안 바뀌게 */
+}
+
+.social-buttons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.social-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.naver {
+  background-color: #03c75a;
+}
+
+.kakao {
+  background-color: #fee500;
+  color: #000;
+}
+
+.apple {
+  background-color: #000;
+}
+
+.google {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.signup-link {
+  font-size: 14px;
+  color: #444;
+  text-decoration: underline;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.Back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 14px;
+  background-color: #eeeeee;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background-color: #ddd;
+}
