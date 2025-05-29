@@ -30,9 +30,9 @@ function LoginPage() {
       </form>
 
       <div className="divider">
-        <hr className="line" />
+        <hr className="line"/>
         <span className="or">또는</span>
-        <hr className="line" />
+        <hr className="line"/>
       </div>
 
       <div className="social-buttons-grid">
