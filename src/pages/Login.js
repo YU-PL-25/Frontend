@@ -6,7 +6,9 @@ import logo from '../assets/shuttleplay_main_logo.png';
 function LoginPage() {
   return (
     <div className="login-wrapper">
-      <Link to="/main" className="Back-btn">이전</Link>
+      <Link to="/main" className="Back-btn">
+        <i className="bi bi-arrow-left"></i>
+      </Link>
       <Link to="/main">
         <img src={logo} alt="로고" className="logo-img"/>
       </Link>
