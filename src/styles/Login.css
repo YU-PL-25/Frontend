@@ -79,14 +79,15 @@ body {
   font-size: 17px;
   font-weight: bold;
   background-color: #AF1AAA;
+  color: #ffffff;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   margin-bottom: 8px;
 }
 
-.login-submit-btn:active {
-  background-color: #ffc107;
+.login-submit-btn:hover {
+  background-color: #900088;
 }
 
 .divider {
