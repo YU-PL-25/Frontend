@@ -29,6 +29,12 @@ function LoginPage() {
         <button type="submit" className="login-submit-btn">로그인</button>
       </form>
 
+      <div className="divider">
+        <hr className="line" />
+        <span className="or">또는</span>
+        <hr className="line" />
+      </div>
+
       <div className="social-buttons-grid">
         <button type="submit" className="social-btn naver">N 네이버 로그인</button>
         <button type="submit" className="social-btn kakao">💬 카카오 로그인</button>
