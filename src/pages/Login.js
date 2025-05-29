@@ -36,7 +36,7 @@ function LoginPage() {
         <button type="submit" className="social-btn apple"> 애플 로그인</button>
       </div>
 
-      <a href="/signup" className="signup-link">회원가입</a>
+      <Link to="/register" className="register-link">회원가입</Link>
     </div>
   );
 }
