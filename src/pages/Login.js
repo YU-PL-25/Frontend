@@ -30,18 +30,10 @@ function LoginPage() {
       </form>
 
       <div className="social-buttons-grid">
-        <form action="https://nid.naver.com/oauth2.0/authorize" method="GET">
-          <button type="submit" className="social-btn naver">N 네이버 로그인</button>
-        </form>
-        <form action="https://kauth.kakao.com/oauth/authorize" method="GET">
-          <button type="submit" className="social-btn kakao">💬 카카오 로그인</button>
-        </form>
-        <form action="https://accounts.google.com/o/oauth2/v2/auth" method="GET">
-          <button type="submit" className="social-btn google">G 구글 로그인</button>
-        </form>
-        <form action="https://appleid.apple.com/auth/authorize" method="GET">
-          <button type="submit" className="social-btn apple"> 애플 로그인</button>
-        </form>
+        <button type="submit" className="social-btn naver">N 네이버 로그인</button>
+        <button type="submit" className="social-btn kakao">💬 카카오 로그인</button>
+        <button type="submit" className="social-btn google">G 구글 로그인</button>
+        <button type="submit" className="social-btn apple"> 애플 로그인</button>
       </div>
 
       <a href="/signup" className="signup-link">회원가입</a>
