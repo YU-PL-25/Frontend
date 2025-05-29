@@ -67,6 +67,12 @@ body {
   margin-bottom: 20px;
 }
 
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 .find-link {
   color: #e60023;
   text-decoration: none;

@@ -22,7 +22,7 @@ function LoginPage() {
         <input type="password" id="password" name="password" placeholder="비밀번호" required/>
 
         <div className="options">
-          <label><input type="checkbox" name="remember"/> 자동로그인</label>
+          <label><input type="checkbox" name="remember"/>자동로그인</label>
           <a href="#!" className="find-link">정보찾기</a>
         </div>
 
