@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './styles/App.css';
 import Landing from './pages/Landing';
 import Main from './pages/Main';
+import Login from './pages/Login';
 import Register from './pages/Register';
 import PreMatching from './pages/PreMatching';
 import CurrentMatching from './pages/CurrentMatching';
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Navigate to="/landing" replace/>}/>
         <Route path="/landing" element={<Landing/>}/>
         <Route path="/main" element={<Main/>}/>
+        <Route path='/login' element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/pre-matching" element={<PreMatching/>}/>
         <Route path="/current-matching" element={<CurrentMatching/>}/>
