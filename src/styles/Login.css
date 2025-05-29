@@ -3,7 +3,7 @@
 }
 
 body {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: 'Wanted Sans Variable', sans-serif;
   margin: 0;
   padding: 0;
   background-color: #faf8f8;
@@ -67,6 +67,12 @@ body {
   margin-bottom: 20px;
 }
 
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 .find-link {
   color: #e60023;
   text-decoration: none;
@@ -79,14 +85,35 @@ body {
   font-size: 17px;
   font-weight: bold;
   background-color: #AF1AAA;
+  color: #ffffff;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 28px;
+  margin-bottom: 8px;
 }
 
-.login-submit-btn:active {
-  background-color: #ffc107;
+.login-submit-btn:hover {
+  background-color: #900088;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+}
+
+.divider .line {
+  flex: 1;
+  height: 1px;
+  background-color: #ccc;
+  border: none;
+}
+
+.divider .or {
+  padding: 0 12px;
+  font-size: 14px;
+  color: #999;
+  white-space: nowrap;
 }
 
 .social-buttons-grid {
@@ -126,12 +153,23 @@ body {
   border: 1px solid #ddd;
 }
 
-.register-link {
+.register-bottom {
   font-size: 14px;
   color: #444;
-  text-decoration: underline;
-  display: inline-block;
-  margin-top: 10px;
+  text-align: center;
+  font-weight: lighter;
+  margin-top: 35px;
+}
+
+.register-link {
+  color: #AF1AAA;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.register-link:hover {
+  color: #900088;
 }
 
 .Back-btn {

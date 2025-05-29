@@ -22,12 +22,18 @@ function LoginPage() {
         <input type="password" id="password" name="password" placeholder="비밀번호" required/>
 
         <div className="options">
-          <label><input type="checkbox" name="remember"/> 자동로그인</label>
+          <label><input type="checkbox" name="remember"/>자동로그인</label>
           <a href="#!" className="find-link">정보찾기</a>
         </div>
 
         <button type="submit" className="login-submit-btn">로그인</button>
       </form>
+
+      <div className="divider">
+        <hr className="line"/>
+        <span className="or">또는</span>
+        <hr className="line"/>
+      </div>
 
       <div className="social-buttons-grid">
         <button type="submit" className="social-btn naver">N 네이버 로그인</button>
@@ -36,7 +42,9 @@ function LoginPage() {
         <button type="submit" className="social-btn apple"> 애플 로그인</button>
       </div>
 
-      <Link to="/register" className="register-link">회원가입</Link>
+      <p className="register-bottom">셔틀플레이가 처음이신가요?
+        <Link to="/register" className="register-link">회원가입</Link>
+      </p>
     </div>
   );
 }
