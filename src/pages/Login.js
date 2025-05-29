@@ -42,7 +42,9 @@ function LoginPage() {
         <button type="submit" className="social-btn apple"> 애플 로그인</button>
       </div>
 
-      <Link to="/register" className="register-link">회원가입</Link>
+      <p className="register-bottom">셔틀플레이가 처음이신가요?
+        <Link to="/register" className="register-link">회원가입</Link>
+      </p>
     </div>
   );
 }

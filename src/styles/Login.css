@@ -153,12 +153,23 @@ body {
   border: 1px solid #ddd;
 }
 
-.register-link {
+.register-bottom {
   font-size: 14px;
   color: #444;
-  text-decoration: underline;
-  display: inline-block;
-  margin-top: 10px;
+  text-align: center;
+  font-weight: lighter;
+  margin-top: 35px;
+}
+
+.register-link {
+  color: #AF1AAA;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.register-link:hover {
+  color: #900088;
 }
 
 .Back-btn {
