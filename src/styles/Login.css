@@ -73,7 +73,7 @@ body {
   font-weight: 500;
 }
 
-.login-btn {
+.login-submit-btn {
   width: 100%;
   padding: 16px;
   font-size: 17px;
@@ -85,9 +85,8 @@ body {
   margin-bottom: 28px;
 }
 
-
-.login-btn:active {
-  background-color: #ffc107;  /* 클릭할 때도 색 안 바뀌게 */
+.login-submit-btn:active {
+  background-color: #ffc107;
 }
 
 .social-buttons-grid {
@@ -127,7 +126,7 @@ body {
   border: 1px solid #ddd;
 }
 
-.signup-link {
+.register-link {
   font-size: 14px;
   color: #444;
   text-decoration: underline;
@@ -139,17 +138,14 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  padding: 8px 14px;
-  background-color: #eeeeee;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #333;
+  padding: 8px 8px;
+  font-size: 20px;
+  color: #444;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.back-btn:hover {
-  background-color: #ddd;
+.Back-btn:hover {
+  color: #AF1AAA;
 }
