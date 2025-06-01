@@ -1,15 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 import logo from '../assets/shuttleplay_main_logo.png';
 
 function LoginPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="login-page">
       <div className="login-wrapper">
-        <Link to="/main" className="Back-btn">
+        <button type="button" className="back-btn" onClick={() => navigate(-1)}>
           <i className="bi bi-arrow-left"></i>
-        </Link>
+        </button>
+
         <Link to="/main">
           <img src={logo} alt="로고" className="logo-img"/>
         </Link>
