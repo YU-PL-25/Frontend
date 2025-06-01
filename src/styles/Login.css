@@ -9,10 +9,16 @@ body {
   background-color: #faf8f8;
 }
 
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .login-wrapper {
-  max-width: 550px;
-  margin: 60px auto;
-  padding: 40px 50px;
+  width: 540px;
+  padding: 40px 60px;
   background-color: #fff;
   border-radius: 16px;
   text-align: center;
@@ -173,7 +179,7 @@ body {
 }
 
 .Back-btn {
-  position: absolute;
+  position: fixed;
   top: 20px;
   left: 20px;
   padding: 8px 8px;
