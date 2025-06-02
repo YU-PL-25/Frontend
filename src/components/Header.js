@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Header.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import logoImage from '../assets/shuttleplay_main_logo.png';
 
 function Header() {
