@@ -13,6 +13,7 @@ import Reservation from './pages/Reservation';
 import Club from './pages/Club';
 import Community from './pages/Community';
 import MyPage from './pages/MyPage';
+import MatchHistory from './pages/MatchHistory';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/club" element={<Club/>}/>
         <Route path="/community" element={<Community/>}/>
         <Route path="/mypage" element={<MyPage/>}/>
+        <Route path="/mypage/match-history" element={<MatchHistory/>}/>
       </Routes>
     </Router>
   );

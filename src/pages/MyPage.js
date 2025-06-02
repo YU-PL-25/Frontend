@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/MyPage.css';
@@ -92,7 +92,9 @@ function MyPage() {
             <button className="action-btn">개인 정보 수정</button>
             <button className="action-btn">비밀번호 변경</button>
             <button className="action-btn">작성 내역 조회</button>
-            <button className="action-btn">경기 내역 조회</button>
+            <Link to="/mypage/match-history" className="action-btn match-history-link">
+              경기 내역 조회
+            </Link>
             <button className="action-btn">참가중인 매칭 조회</button>
           </div>
         </div>
