@@ -140,23 +140,44 @@ body {
   color: white;
 }
 
+.social-btn:hover {
+  transition: background-color 0.2s ease;
+}
+
 .naver {
   background-color: #03c75a;
 }
 
+.naver:hover  {
+  background-color: #029a49;
+}
+
 .kakao {
-  background-color: #fee500;
+  background-color: #ffde00;
   color: #000;
+}
+
+.kakao:hover  {
+  background-color: #d9bd00;
+  color: #000000;
 }
 
 .apple {
   background-color: #000;
 }
 
+.apple:hover  {
+  background-color: #333333;
+}
+
 .google {
   background-color: #fff;
   color: #333;
   border: 1px solid #ddd;
+}
+
+.google:hover {
+  background-color: #f0f0f0;
 }
 
 .register-bottom {
