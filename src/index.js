@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import store from './redux/store'; 
 
 // 웹 브라우저 탭 제목에 들어갈 문구를 배열로 정의
 const details = [
@@ -12,7 +14,7 @@ const details = [
   "셔틀플레이에서 실력도, 인연도 쌓자",
   "매칭부터 커뮤니티까지, 배드민턴의 모든 것"
 ];
-    
+
 // 랜덤으로 문구를 선택하여 탭 제목에 반영
 const idx = Math.floor(Math.random() * details.length);
 document.title = "셔틀플레이 | " + details[idx];
@@ -20,7 +22,9 @@ document.title = "셔틀플레이 | " + details[idx];
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App/>
+    </Provider>
   </React.StrictMode>
 );
 
