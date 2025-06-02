@@ -40,10 +40,10 @@ function LoginPage() {
         </div>
 
         <div className="social-buttons-grid">
-          <button type="submit" className="social-btn naver">N 네이버 로그인</button>
-          <button type="submit" className="social-btn kakao">💬 카카오 로그인</button>
-          <button type="submit" className="social-btn google">G 구글 로그인</button>
-          <button type="submit" className="social-btn apple"> 애플 로그인</button>
+          <button type="submit" className="social-btn naver">네이버 로그인</button>
+          <button type="submit" className="social-btn kakao">카카오 로그인</button>
+          <button type="submit" className="social-btn google">구글 로그인</button>
+          <button type="submit" className="social-btn apple">애플 로그인</button>
         </div>
 
         <p className="register-bottom">셔틀플레이가 처음이신가요?
