@@ -12,6 +12,7 @@ import Competition from './pages/Competition';
 import Reservation from './pages/Reservation';
 import Club from './pages/Club';
 import Community from './pages/Community';
+import MyPage from './pages/MyPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/reservation" element={<Reservation/>}/>
         <Route path="/club" element={<Club/>}/>
         <Route path="/community" element={<Community/>}/>
+        <Route path="/mypage" element={<MyPage/>}/>
       </Routes>
     </Router>
   );
