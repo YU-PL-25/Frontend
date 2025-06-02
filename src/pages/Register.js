@@ -66,8 +66,7 @@ function Register() {
   const handleSubmit = e => {
     e.preventDefault();
     console.table(form);
-    window.alert('회원가입이 완료되었습니다!');
-    navigate('/login');
+    navigate('/register/success');
   };
 
   return (
@@ -78,31 +77,31 @@ function Register() {
 
       <div className="register-wrapper">
         <Link to="/main">
-          <img src={logo} alt="로고" className="logo-img" />
+          <img src={logo} alt="로고" className="logo-img"/>
         </Link>
 
         <h2 className="subtitle">회원가입</h2>
 
         <div className="progress-bar">
-          <div className="progress" style={{ width: step === 1 ? '50%' : '100%' }} />
+          <div className="progress" style={{ width: step === 1 ? '50%' : '100%' }}/>
         </div>
 
         {step === 1 && (
           <form className="register-form" onSubmit={e => e.preventDefault()}>
             <label htmlFor="name">이름</label>
-            <input id="name" name="name" value={form.name} onChange={handleChange} placeholder="홍길동" required />
+            <input id="name" name="name" value={form.name} onChange={handleChange} placeholder="홍길동" required/>
 
             <label htmlFor="email">이메일</label>
-            <input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="abcd@abcd.com" required />
+            <input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="abcd@abcd.com" required/>
 
             <label htmlFor="phone">전화번호</label>
-            <input id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="010-1234-5678" required />
+            <input id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="010-1234-5678" required/>
 
             <label htmlFor="password">비밀번호</label>
-            <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="8-20자, 대/소문자·숫자·특수문자 모두 포함" required />
+            <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="8-20자, 대/소문자·숫자·특수문자 모두 포함" required/>
 
             <label htmlFor="nickname">닉네임</label>
-            <input id="nickname" name="nickname" value={form.nickname} onChange={handleChange} required />
+            <input id="nickname" name="nickname" value={form.nickname} onChange={handleChange} required/>
 
             {error && <p className="form-error">{error}</p>}
 
