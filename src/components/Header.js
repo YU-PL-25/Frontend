@@ -1,9 +1,39 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
 import '../styles/Header.css';
 import logoImage from '../assets/shuttleplay_main_logo.png';
 
 function Header() {
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setDropdownOpen(false);
+    navigate('/main');
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(prev => !prev);
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="header">
       <div className="header-left">
@@ -26,9 +56,26 @@ function Header() {
       <div className="header-right">
         <i className="bi bi-chat-dots" title="채팅"></i>
         <i className="bi bi-bell" title="알림"></i>
-        <button className="login-btn">
-          <Link to="/login" className="login-link">로그인</Link>
-        </button>
+
+        {!isAuthenticated && (
+          <button className="login-btn">
+            <Link to="/login" className="login-link">로그인</Link>
+          </button>
+        )}
+
+        {isAuthenticated && (
+          <div className="profile-container" ref={dropdownRef}>
+            <button className="profile-btn" onClick={toggleDropdown}>
+              {user.nickname || user.name}
+            </button>
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                <Link to="/mypage" className="dropdown-item" onClick={() => setDropdownOpen(false)}>마이페이지</Link>
+                <button className="dropdown-item logout-item" onClick={handleLogout}>로그아웃</button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
