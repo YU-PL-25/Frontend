@@ -30,9 +30,9 @@ npm install
 
 ```bash
 npm install axios
-npm install bootstrap
 npm install bootstrap-icons
 npm install react-router-dom
+npm install @reduxjs/toolkit react-redux
 ```
 
 4. 개발 서버 실행
