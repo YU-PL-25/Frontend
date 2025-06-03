@@ -30,6 +30,7 @@ npm install
 
 ```bash
 npm install axios
+npm install lucide-react
 npm install bootstrap-icons
 npm install react-router-dom
 npm install @reduxjs/toolkit react-redux

@@ -102,20 +102,20 @@ body {
   background-color: #900088;
 }
 
-.divider {
+.login-divider {
   display: flex;
   align-items: center;
   margin: 24px 0;
 }
 
-.divider .line {
+.login-divider .line {
   flex: 1;
   height: 1px;
   background-color: #ccc;
   border: none;
 }
 
-.divider .or {
+.login-divider .or {
   padding: 0 12px;
   font-size: 14px;
   color: #999;

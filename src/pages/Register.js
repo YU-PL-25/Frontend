@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Register.css';
 import logo from '../assets/shuttleplay_main_logo.png';
+import axios from 'axios';
 
 function Register() {
   const navigate = useNavigate();
@@ -63,10 +64,14 @@ function Register() {
 
   const back = () => setStep(1);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.table(form);
-    navigate('/register/success');
+    try {
+      await axios.post('/api/users/register', form);
+      navigate('/register/success');
+    } catch (err) {
+      setError('회원가입에 실패했습니다. 다시 시도해 주세요.');
+    }
   };
 
   return (

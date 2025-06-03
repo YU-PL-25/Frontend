@@ -33,7 +33,7 @@ function LoginPage() {
           <button type="submit" className="login-submit-btn">로그인</button>
         </form>
 
-        <div className="divider">
+        <div className="login-divider">
           <hr className="line"/>
           <span className="or">또는</span>
           <hr className="line"/>
