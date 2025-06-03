@@ -12,6 +12,7 @@ import Competition from './pages/Competition';
 import Reservation from './pages/Reservation';
 import Club from './pages/Club';
 import Community from './pages/Community';
+import GameRoomDetail from './pages/GameRoomDetail';
 import MyPage from './pages/MyPage';
 import MatchHistory from './pages/MatchHistory';
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/community" element={<Community/>}/>
         <Route path="/mypage" element={<MyPage/>}/>
         <Route path="/mypage/match-history" element={<MatchHistory/>}/>
+        <Route path="/gameroom/:id" element={<GameRoomDetail/>}/>
       </Routes>
     </Router>
   );
