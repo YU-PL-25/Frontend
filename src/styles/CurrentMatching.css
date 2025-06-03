@@ -1,3 +1,4 @@
+/* ✅ 기본 레이아웃 설정: Footer가 밀리지 않도록 설정 */
 html, body, #root, .current-matching-wrapper {
   height: 100%;
   margin: 0;
@@ -15,4 +16,264 @@ html, body, #root, .current-matching-wrapper {
   padding: 40px 60px;
   font-family: 'Wanted Sans Variable', sans-serif;
   background-color: #fff;
+}
+
+
+/* ▼ 기본 배경 및 컨테이너 */
+.court-matching-wrap {
+  max-width: 1200px;
+  margin: 36px auto 0 auto;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background: #fafafa;
+  padding-bottom: 30px;
+}
+
+.info-card {
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 36px 23px 36px;
+  margin-bottom: 26px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.info-desc {
+  font-size: 15px;
+  color: #6a7280;
+}
+
+.clock-box {
+  font-size: 15px;
+  color: #444;
+  display: flex;
+  align-items: center;
+}
+
+.sub-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 4px 0;
+}
+
+.court-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 1.5px 12px;
+  font-size: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.badge-black { background: #222; color: #fff; }
+.badge-gray { background: #ececec; color: #555; border: 1px solid #e5e7eb; }
+.badge-green { background: #defad0; color: #137333; }
+.badge-yellow { background: #fffbcf; color: #b59b00; }
+.badge-red { background: #ffe1e1; color: #b30000; }
+
+.sub-address {
+  color: #444;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.auto-label {
+  margin-left: 4px;
+}
+
+.main-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.game-rooms-card,
+.waitlist-card {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 24px 10px 24px;
+  min-height: 340px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  gap: 7px;
+}
+
+/* ▼▼▼ 추가/수정된 부분 ▼▼▼ */
+.create-btn,
+.manual-btn {
+  margin-left: auto;
+  font-size: 13px;
+  padding: 5px 13px;
+  background: #AF1AAA !important;
+  color: #fff !important;
+  border-radius: 7px;
+  border: none;
+  font-weight: 600;
+  transition: 0.15s;
+}
+
+.create-btn:hover,
+.manual-btn:hover {
+  background: #8e158a !important;
+  color: #fff !important;
+}
+/* ▲▲▲ 여기까지 ▲▲▲ */
+
+.panel-desc {
+  font-size: 13px;
+  color: #6a7280;
+  margin-bottom: 11px;
+}
+
+.game-room-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  background: #fafafa;
+  padding: 14px 16px 10px 16px;
+}
+
+.room-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.room-player-count {
+  color: #888;
+  font-size: 12px;
+}
+
+.players-list {
+  margin: 8px 0 0 0;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.avatar {
+  width: 22px;
+  height: 22px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.player-name {
+  font-size: 14px;
+}
+
+.remove-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #9e2323;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.join-btn {
+  margin-top: 2px;
+  font-size: 13px;
+  background: #e8e3fd;
+  color: #413c5a;
+  padding: 3px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+}
+
+.room-created-at {
+  color: #888;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.waitlist-list {
+  margin-top: 6px;
+}
+
+.waitlist-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #f2f2f2;
+  border-radius: 8px;
+  padding: 7px 12px;
+  margin-bottom: 7px;
+  background: #fcfcfc;
+}
+
+.wait-avatar {
+  width: 28px;
+  height: 28px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.wait-name {
+  font-size: 14px;
+}
+
+.wait-time {
+  font-size: 12px;
+  color: #888;
+  margin-left: 4px;
+}
+
+.wait-join-btn {
+  font-size: 13px;
+  padding: 3px 11px;
+  border-radius: 6px;
+  background: #e8e3fd;
+  color: #413c5a;
+  border: none;
+  font-weight: 600;
+  margin-left: 2px;
 }
