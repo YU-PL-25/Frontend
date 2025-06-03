@@ -14,7 +14,8 @@
 
 /* 선택 모드 카드 */
 .select-mode-card {
-  max-width: 720px;
+  max-width: 800px;
+   width: 100%;
   margin: 180px auto;
   background-color: #ffffff;
   border-radius: 20px;
