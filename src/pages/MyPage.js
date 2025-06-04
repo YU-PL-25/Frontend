@@ -23,67 +23,69 @@ function MyPage() {
           <div className="mypage-info">
             <div className="info-row">
               <span className="info-label">이름</span>
-              <span className="info-value">{user.name || '미등록'}</span>
+              <span className="info-value">{user?.name || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">이메일</span>
-              <span className="info-value">{user.email || '미등록'}</span>
+              <span className="info-value">{user?.email || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">전화번호</span>
-              <span className="info-value">{user.phone || '미등록'}</span>
+              <span className="info-value">{user?.phone || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">닉네임</span>
-              <span className="info-value">{user.nickname || '미등록'}</span>
+              <span className="info-value">{user?.nickname || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">성별</span>
-              <span className="info-value">{user.gender || '미등록'}</span>
+              <span className="info-value">{user?.gender || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">급수</span>
-              <span className="info-value">{user.rank || '미등록'}</span>
+              <span className="info-value">{user?.rank || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">연령대</span>
-              <span className="info-value">{user.profile.ageGroup || '미등록'}</span>
+              <span className="info-value">{user?.profile?.ageGroup || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">플레이 스타일</span>
-              <span className="info-value">{user.profile.playStyle || '미등록'}</span>
+              <span className="info-value">{user?.profile?.playStyle || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">게임 타입</span>
-              <span className="info-value">{user.profile.gameType || '미등록'}</span>
+              <span className="info-value">{user?.profile?.gameType || '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">MMR</span>
-              <span className="info-value">{user.mmr.rating}</span>
+              <span className="info-value">{user?.mmr?.rating ?? '정보 없음'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">게임 횟수</span>
-              <span className="info-value">{user.mmr.gamesPlayed}</span>
+              <span className="info-value">{user?.mmr?.gamesPlayed ?? '정보 없음'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승리 횟수</span>
-              <span className="info-value">{user.mmr.winsCount}</span>
+              <span className="info-value">{user?.mmr?.winsCount ?? '정보 없음'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승률</span>
-              <span className="info-value">{Math.round(user.mmr.winRate * 100)}%</span>
+              <span className="info-value">
+                {user?.mmr?.winRate !== undefined ? `${Math.round(user.mmr.winRate * 100)}%` : '정보 없음'}
+              </span>
             </div>
           </div>
 

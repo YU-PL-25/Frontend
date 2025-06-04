@@ -32,7 +32,7 @@ function Register() {
     const emailReg = /^[\w.+-]+@[a-z\d-]+(\.[a-z\d-]+)+$/i;
     const phoneReg = /^01[016789]-\d{3,4}-\d{4}$/;
     const passReg  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
-
+    
     if (!name || !email || !phone || !password || !nickname) {
       setError('모든 필수 항목을 입력해 주세요.');
       return;

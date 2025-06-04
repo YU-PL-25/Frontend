@@ -6,8 +6,7 @@
   --gray600: #666666;
 }
 
-html,
-body {
+html, body {
   height: 100%;
   margin: 0;
 }
@@ -28,10 +27,10 @@ body {
 }
 
 .mh-container {
-  width: 700px;
+  width: 720px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   padding: 40px 50px;
   font-family: 'Wanted Sans Variable', sans-serif;
   color: #444444;
@@ -53,6 +52,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
+  font-size: 15px;
 }
 
 .mh-table thead {
@@ -61,14 +61,17 @@ body {
 
 .mh-table th,
 .mh-table td {
-  padding: 12px 8px;
+  padding: 12px 10px;
   border: 1px solid var(--gray200);
-  font-size: 15px;
 }
 
 .mh-table th {
   font-weight: 600;
-  color: #333333;
+  color: #333;
+}
+
+.mh-table td {
+  color: #555;
 }
 
 .mh-table tbody tr:hover {
@@ -77,12 +80,12 @@ body {
 
 .result-win {
   color: #2e7d32;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .result-loss {
   color: #c62828;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .mh-pagination {
@@ -97,7 +100,7 @@ body {
   padding: 6px 12px;
   font-size: 14px;
   background: #ffffff;
-  color: #444444;
+  color: #444;
   border: 1px solid var(--gray200);
   border-radius: 4px;
   cursor: pointer;
@@ -110,12 +113,12 @@ body {
 
 .page-btn:disabled {
   color: var(--gray400);
-  cursor: default;
   background: #f9f9f9;
+  cursor: not-allowed;
 }
 
 .page-btn.active {
   background: var(--brand);
-  color: #ffffff;
+  color: #fff;
   border-color: var(--brand);
 }

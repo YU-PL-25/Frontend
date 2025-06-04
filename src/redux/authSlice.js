@@ -1,49 +1,67 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/login', { email, password }, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+      });
+
+      const { status, userId, message } = response.data;
+
+      if (status === 200 && userId) {
+        return { userId };
+      } else {
+        return rejectWithValue(message || '아이디 또는 비밀번호가 올바르지 않습니다.');
+      }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || '서버에 연결할 수 없습니다.');
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    isAuthenticated: false, // True for testing purposes
-    user: {
-      id: 1,
-      password: null,
-      name: '홍길동',
-      nickname: null,
-      gender: null,
-      email: 'hong@test.com',
-      phone: '010-1234-5678',
-      rank: 'S',
-      mmr: {
-        mmrId: 0,
-        rating: 1600,
-        winRate: 0.0,
-        gamesPlayed: 0,
-        winsCount: 0,
-        tolerance: 200
-      },
-      profile: {
-        profileId: 1,
-        ageGroup: '20대',
-        playStyle: '즐겜',
-        gameType: '단식'
-      },
-      gameRoom: null,
-      role: 'normal',
-      currentGame: null,
-      inGame: false
-    },
-    status: 'succeeded',
+    isAuthenticated: false,
+    user: null,
+    status: 'idle',
     error: null
   },
   reducers: {
+    loginSuccess(state, action) {
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.status = 'succeeded';
+      state.error = null;
+    },
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;
       state.status = 'idle';
       state.error = null;
     }
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.isAuthenticated = true;
+        state.user = { id: action.payload.userId };
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
   }
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, loginSuccess } = authSlice.actions;
 export default authSlice.reducer;
