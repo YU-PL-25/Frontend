@@ -7,9 +7,8 @@ import '../styles/MyPage.css';
 import axios from 'axios';
 
 function MyPage() {
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -20,8 +19,6 @@ function MyPage() {
       setUserData(response.data);
       } catch (error) {
         console.error('회원정보 조회 실패:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
