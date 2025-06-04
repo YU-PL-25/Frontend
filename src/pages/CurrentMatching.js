@@ -6,12 +6,12 @@ import { MapPin, Clock, Users, UserPlus, Plus, Settings } from "lucide-react";
 
 // 배지 컴포넌트
 const Badge = ({ children, color = "gray" }) => (
-  <span className={`badge badge-${color}`}>{children}</span>
+  <span className={`cm-badge cm-badge-${color}`}>{children}</span>
 );
 
 // 버튼 컴포넌트
 const Button = ({ children, ...props }) => (
-  <button className="btn" {...props}>{children}</button>
+  <button className="cm-btn" {...props}>{children}</button>
 );
 
 // 실력 색상 매핑
@@ -150,74 +150,74 @@ export default function CourtMatching() {
   };
 
   return (
-    <div className="current-matching-wrapper">
+    <div className="cm-current-matching-wrapper">
       <Header />
 
-      <div className="current-matching-content">
-        <div className="court-matching-wrap">
+      <div className="cm-current-matching-content">
+        <div className="cm-court-matching-wrap">
           {/* 상단 정보 카드 */}
-          <div className="info-card">
-            <div className="info-row">
+          <div className="cm-info-card">
+            <div className="cm-info-row">
               <div>
-                <div className="main-title">현장 매칭 모드</div>
-                <div className="info-desc">현재 위치에서 게임방을 생성하거나 참가하세요</div>
+                <div className="cm-main-title">현장 매칭 모드</div>
+                <div className="cm-info-desc">현재 위치에서 게임방을 생성하거나 참가하세요</div>
               </div>
-              <div className="clock-box">
+              <div className="cm-clock-box">
                 <Clock style={{ width: 18, height: 18, marginRight: 4 }} />
                 {currentTime.toLocaleTimeString()}
               </div>
             </div>
-            <div className="sub-row">
+            <div className="cm-sub-row">
               <MapPin style={{ width: 16, height: 16, marginRight: 4 }} />
-              <span className="court-name">영남대학교 체육관</span>
-              <Badge color="black">매칭 가능</Badge>
+              <span className="cm-court-name">영남대학교 체육관</span>
+              <Badge color="cm-black">매칭 가능</Badge>
             </div>
-            <div className="sub-address">123 River St, Downtown</div>
-            <div className="checkbox-row">
+            <div className="cm-sub-address">123 River St, Downtown</div>
+            <div className="cm-checkbox-row">
               <input
                 type="checkbox"
                 checked={autoMatchEnabled}
                 onChange={e => setAutoMatchEnabled(e.target.checked)}
                 id="auto-match"
               />
-              <label htmlFor="auto-match" className="auto-label">
+              <label htmlFor="auto-match" className="cm-auto-label">
                 자동 게임 생성 활성화
               </label>
             </div>
           </div>
 
           {/* 좌우 패널 */}
-          <div className="main-panel-grid">
+          <div className="cm-main-panel-grid">
             {/* 왼쪽: 게임방 목록 */}
-            <div className="game-rooms-card">
-              <div className="panel-header">
+            <div className="cm-game-rooms-card">
+              <div className="cm-panel-header">
                 <Users style={{ width: 18, height: 18, marginRight: 5 }} />
                 <span>진행 중인 게임방</span>
                 <Badge color="gray">{gameRooms.length}</Badge>
-                <Button className="create-btn" onClick={handleCreateRoom}>
+                <Button className="cm-create-btn" onClick={handleCreateRoom}>
                   <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
                   게임방 생성
                 </Button>
               </div>
-              <div className="panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
+              <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
               {gameRooms.map(room => (
-                <div key={room.id} className="game-room-box">
-                  <div className="room-header-row">
+                <div key={room.id} className="cm-game-room-box">
+                  <div className="cm-room-header-row">
                     <div>
                       <Badge color="gray">{room.gameType === "Doubles" ? "복식" : "단식"}</Badge>
                       <Badge color={room.status === "Ready" ? "black" : "gray"}>
                         {room.status === "Ready" ? "매칭 완료" : "대기 중"}
                       </Badge>
                     </div>
-                    <span className="room-player-count">
+                    <span className="cm-room-player-count">
                       {room.players.length}/{room.maxPlayers} 명
                     </span>
                   </div>
-                  <div className="players-list">
+                  <div className="cm-players-list">
                     {room.players.map(player => (
-                      <div key={player.id} className="player-row">
-                        <div className="avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                        <span className="player-name">{player.name}</span>
+                      <div key={player.id} className="cm-player-row">
+                        <div className="cm-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                        <span className="cm-player-name">{player.name}</span>
                         <Badge color={skillColor[player.skillLevel]}>
                           {player.skillLevel === "Beginner"
                             ? "초급"
@@ -225,19 +225,19 @@ export default function CourtMatching() {
                             ? "중급"
                             : "고급"}
                         </Badge>
-                        <Button className="remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
+                        <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
                           내보내기
                         </Button>
                       </div>
                     ))}
                     {room.players.length < room.maxPlayers && waitlist.length > 0 && (
-                      <Button className="join-btn" onClick={() => handleJoinRoom(room.id)}>
+                      <Button className="cm-join-btn" onClick={() => handleJoinRoom(room.id)}>
                         <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
                         입장
                       </Button>
                     )}
                   </div>
-                  <div className="room-created-at">
+                  <div className="cm-room-created-at">
                     {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
                   </div>
                 </div>
@@ -245,22 +245,22 @@ export default function CourtMatching() {
             </div>
 
             {/* 오른쪽: 대기열 */}
-            <div className="waitlist-card">
-              <div className="panel-header">
+            <div className="cm-waitlist-card">
+              <div className="cm-panel-header">
                 <Users style={{ width: 18, height: 18, marginRight: 5 }} />
                 <span>대기자 명단</span>
                 <Badge color="gray">{waitlist.length}</Badge>
-                <Button className="manual-btn" onClick={() => setManualMatchOpen(true)}>
+                <Button className="cm-manual-btn" onClick={() => setManualMatchOpen(true)}>
                   <Settings style={{ width: 16, height: 16, marginRight: 5 }} />
                   수동 매칭
                 </Button>
               </div>
-              <div className="panel-desc">해당 구장에서 참가를 기다리는 대기자 명단입니다</div>
-              <div className="waitlist-list">
+              <div className="cm-panel-desc">해당 구장에서 참가를 기다리는 대기자 명단입니다</div>
+              <div className="cm-waitlist-list">
                 {waitlist.map(player => (
-                  <div className="waitlist-row" key={player.id}>
-                    <div className="wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                    <span className="wait-name">{player.name}</span>
+                  <div className="cm-waitlist-row" key={player.id}>
+                    <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                    <span className="cm-wait-name">{player.name}</span>
                     <Badge color={skillColor[player.skillLevel]}>
                       {player.skillLevel === "Beginner"
                         ? "초급"
@@ -268,11 +268,11 @@ export default function CourtMatching() {
                         ? "중급"
                         : "고급"}
                     </Badge>
-                    <span className="wait-time">{player.waitTime}분 대기 중</span>
-                    <Button className="wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Doubles")}>
+                    <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
+                    <Button className="cm-wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Doubles")}>
                       복식 입장
                     </Button>
-                    <Button className="wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Singles")}>
+                    <Button className="cm-wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Singles")}>
                       단식 입장
                     </Button>
                   </div>
@@ -283,7 +283,7 @@ export default function CourtMatching() {
 
           {/* 수동 매칭 모달 */}
           {manualMatchOpen && (
-            <div className="modal">
+            <div className="cm-modal">
               <h3 style={{ marginBottom: '18px' }}>수동 매칭할 대기자 선택</h3>
               {waitlist.length === 0 ? (
                 <div style={{ marginBottom: 16, color: "#aaa" }}>대기자가 없습니다.</div>
