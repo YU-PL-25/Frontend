@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess } from '../redux/authSlice';
 import '../styles/Login.css';
 import logo from '../assets/shuttleplay_main_logo.png';
@@ -11,6 +11,11 @@ function LoginPage() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  if (isAuthenticated) {
+    return <Navigate to="/main" replace/>;
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
