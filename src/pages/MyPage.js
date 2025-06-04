@@ -85,23 +85,23 @@ function MyPage() {
 
             <div className="info-row">
               <span className="info-label">MMR</span>
-              <span className="info-value">{userData?.mmr?.rating ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.rating ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">게임 횟수</span>
-              <span className="info-value">{userData?.mmr?.gamesPlayed ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.gamesPlayed ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승리 횟수</span>
-              <span className="info-value">{userData?.mmr?.winsCount ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.winsCount ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승률</span>
               <span className="info-value">
-                {userData?.mmr?.winRate !== undefined ? `${Math.round(userData.mmr.winRate * 100)}%` : '정보 없음'}
+                {userData?.mmr?.winRate !== undefined ? `${Math.round(userData.mmr.winRate * 100)}%` : '미등록'}
               </span>
             </div>
           </div>
