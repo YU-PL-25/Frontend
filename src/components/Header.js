@@ -6,7 +6,7 @@ import '../styles/Header.css';
 import logoImage from '../assets/shuttleplay_main_logo.png';
 
 function Header() {
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -57,16 +57,14 @@ function Header() {
         <i className="bi bi-chat-dots" title="채팅"></i>
         <i className="bi bi-bell" title="알림"></i>
 
-        {!isAuthenticated && (
+        {!isAuthenticated ? (
           <button className="login-btn">
             <Link to="/login" className="login-link">로그인</Link>
           </button>
-        )}
-
-        {isAuthenticated && (
+        ) : (
           <div className="profile-container" ref={dropdownRef}>
             <button className="profile-btn" onClick={toggleDropdown}>
-              {user.nickname || user.name}
+              <i className="bi bi-person-circle"></i>
             </button>
             {dropdownOpen && (
               <div className="dropdown-menu">
