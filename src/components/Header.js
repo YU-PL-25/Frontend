@@ -15,7 +15,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/logout');
+      await axios.post('/logout', {}, { withCredentials: true });
       localStorage.removeItem('user');
       dispatch(logout());
       setDropdownOpen(false);
