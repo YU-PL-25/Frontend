@@ -218,3 +218,21 @@ body {
   color: #AF1AAA;
   outline: none;
 }
+
+.login-form-error {
+  color: #e53935;
+  font-size: 14px;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.login-form input[type="email"] {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f6f8fa;
+  margin-bottom: 14px;
+}
