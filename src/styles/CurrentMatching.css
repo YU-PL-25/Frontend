@@ -1,17 +1,17 @@
 /* ✅ 기본 레이아웃 설정: Footer가 밀리지 않도록 설정 */
-html, body, #root, .current-matching-wrapper {
+html, body, #root, .cm-current-matching-wrapper {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-.current-matching-wrapper {
+.cm-current-matching-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.current-matching-content {
+.cm-current-matching-content {
   flex: 1;
   padding: 40px 60px;
   font-family: 'Wanted Sans Variable', sans-serif;
@@ -20,7 +20,7 @@ html, body, #root, .current-matching-wrapper {
 
 
 /* ▼ 기본 배경 및 컨테이너 */
-.court-matching-wrap {
+.cm-court-matching-wrap {
   max-width: 1200px;
   margin: 36px auto 0 auto;
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
@@ -28,7 +28,7 @@ html, body, #root, .current-matching-wrapper {
   padding-bottom: 30px;
 }
 
-.info-card {
+.cm-info-card {
   border: 1.5px solid #e5e7eb;
   background: #fff;
   border-radius: 12px;
@@ -36,42 +36,42 @@ html, body, #root, .current-matching-wrapper {
   margin-bottom: 26px;
 }
 
-.info-row {
+.cm-info-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.main-title {
+.cm-main-title {
   font-size: 24px;
   font-weight: bold;
 }
 
-.info-desc {
+.cm-info-desc {
   font-size: 15px;
   color: #6a7280;
 }
 
-.clock-box {
+.cm-clock-box {
   font-size: 15px;
   color: #444;
   display: flex;
   align-items: center;
 }
 
-.sub-row {
+.cm-sub-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 12px 0 4px 0;
 }
 
-.court-name {
+.cm-court-name {
   font-weight: 600;
   font-size: 16px;
 }
 
-.badge {
+.cm-badge {
   display: inline-block;
   padding: 1.5px 12px;
   font-size: 12px;
@@ -81,19 +81,19 @@ html, body, #root, .current-matching-wrapper {
   vertical-align: middle;
 }
 
-.badge-black { background: #222; color: #fff; }
-.badge-gray { background: #ececec; color: #555; border: 1px solid #e5e7eb; }
-.badge-green { background: #defad0; color: #137333; }
-.badge-yellow { background: #fffbcf; color: #b59b00; }
-.badge-red { background: #ffe1e1; color: #b30000; }
+.cm-badge-black { background: #222; color: #fff; }
+.cm-badge-gray { background: #ececec; color: #555; border: 1px solid #e5e7eb; }
+.cm-badge-green { background: #defad0; color: #137333; }
+.cm-badge-yellow { background: #fffbcf; color: #b59b00; }
+.cm-badge-red { background: #ffe1e1; color: #b30000; }
 
-.sub-address {
+.cm-sub-address {
   color: #444;
   font-size: 14px;
   margin-bottom: 4px;
 }
 
-.checkbox-row {
+.cm-checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -102,18 +102,18 @@ html, body, #root, .current-matching-wrapper {
   font-weight: 500;
 }
 
-.auto-label {
+.cm-auto-label {
   margin-left: 4px;
 }
 
-.main-panel-grid {
+.cm-main-panel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 22px;
 }
 
-.game-rooms-card,
-.waitlist-card {
+.cm-game-rooms-card,
+.cm-waitlist-card {
   background: #fff;
   border: 1.5px solid #e5e7eb;
   border-radius: 12px;
@@ -121,7 +121,7 @@ html, body, #root, .current-matching-wrapper {
   min-height: 340px;
 }
 
-.panel-header {
+.cm-panel-header {
   display: flex;
   align-items: center;
   font-size: 18px;
@@ -131,8 +131,8 @@ html, body, #root, .current-matching-wrapper {
 }
 
 /* ▼▼▼ 추가/수정된 부분 ▼▼▼ */
-.create-btn,
-.manual-btn {
+.cm-create-btn,
+.cm-manual-btn {
   margin-left: auto;
   font-size: 13px;
   padding: 5px 13px;
@@ -144,20 +144,20 @@ html, body, #root, .current-matching-wrapper {
   transition: 0.15s;
 }
 
-.create-btn:hover,
-.manual-btn:hover {
+.cm-create-btn:hover,
+.cm-manual-btn:hover {
   background: #8e158a !important;
   color: #fff !important;
 }
 /* ▲▲▲ 여기까지 ▲▲▲ */
 
-.panel-desc {
+.cm-panel-desc {
   font-size: 13px;
   color: #6a7280;
   margin-bottom: 11px;
 }
 
-.game-room-box {
+.cm-game-room-box {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   margin-bottom: 14px;
@@ -165,29 +165,29 @@ html, body, #root, .current-matching-wrapper {
   padding: 14px 16px 10px 16px;
 }
 
-.room-header-row {
+.cm-room-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.room-player-count {
+.cm-room-player-count {
   color: #888;
   font-size: 12px;
 }
 
-.players-list {
+.cm-players-list {
   margin: 8px 0 0 0;
 }
 
-.player-row {
+.cm-player-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
 }
 
-.avatar {
+.cm-avatar {
   width: 22px;
   height: 22px;
   background: #e5e7eb;
@@ -199,11 +199,11 @@ html, body, #root, .current-matching-wrapper {
   font-weight: bold;
 }
 
-.player-name {
+.cm-player-name {
   font-size: 14px;
 }
 
-.remove-btn {
+.cm-remove-btn {
   margin-left: auto;
   background: none;
   border: none;
@@ -213,7 +213,7 @@ html, body, #root, .current-matching-wrapper {
   cursor: pointer;
 }
 
-.join-btn {
+.cm-join-btn {
   margin-top: 2px;
   font-size: 13px;
   background: #e8e3fd;
@@ -224,17 +224,17 @@ html, body, #root, .current-matching-wrapper {
   border: none;
 }
 
-.room-created-at {
+.cm-room-created-at {
   color: #888;
   font-size: 12px;
   margin-top: 3px;
 }
 
-.waitlist-list {
+.cm-waitlist-list {
   margin-top: 6px;
 }
 
-.waitlist-row {
+.cm-waitlist-row {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -245,7 +245,7 @@ html, body, #root, .current-matching-wrapper {
   background: #fcfcfc;
 }
 
-.wait-avatar {
+.cm-wait-avatar {
   width: 28px;
   height: 28px;
   background: #e5e7eb;
@@ -257,17 +257,17 @@ html, body, #root, .current-matching-wrapper {
   font-weight: bold;
 }
 
-.wait-name {
+.cm-wait-name {
   font-size: 14px;
 }
 
-.wait-time {
+.cm-wait-time {
   font-size: 12px;
   color: #888;
   margin-left: 4px;
 }
 
-.wait-join-btn {
+.cm-wait-join-btn {
   font-size: 13px;
   padding: 3px 11px;
   border-radius: 6px;
