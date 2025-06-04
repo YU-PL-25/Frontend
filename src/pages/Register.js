@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import '../styles/Register.css';
 import logo from '../assets/shuttleplay_main_logo.png';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 function Register() {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ function Register() {
     playStyle: '',
     gameType: '',
   });
+
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  if (isAuthenticated) {
+    return <Navigate to="/main" replace/>;
+  }
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -153,7 +160,7 @@ function Register() {
             <select id="playStyle" name="playStyle" value={form.playStyle} onChange={handleChange} required>
               <option value="">선택</option>
               <option value="즐겜">즐겜</option>
-              <option value="승부욕">빡겜</option>
+              <option value="승부욕">승부욕</option>
             </select>
 
             <label htmlFor="gameType">게임 타입</label>
