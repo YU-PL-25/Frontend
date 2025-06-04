@@ -7,9 +7,8 @@ import '../styles/MyPage.css';
 import axios from 'axios';
 
 function MyPage() {
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -20,8 +19,6 @@ function MyPage() {
       setUserData(response.data);
       } catch (error) {
         console.error('회원정보 조회 실패:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -88,23 +85,23 @@ function MyPage() {
 
             <div className="info-row">
               <span className="info-label">MMR</span>
-              <span className="info-value">{userData?.mmr?.rating ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.rating ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">게임 횟수</span>
-              <span className="info-value">{userData?.mmr?.gamesPlayed ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.gamesPlayed ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승리 횟수</span>
-              <span className="info-value">{userData?.mmr?.winsCount ?? '정보 없음'}</span>
+              <span className="info-value">{userData?.mmr?.winsCount ?? '미등록'}</span>
             </div>
 
             <div className="info-row">
               <span className="info-label">승률</span>
               <span className="info-value">
-                {userData?.mmr?.winRate !== undefined ? `${Math.round(userData.mmr.winRate * 100)}%` : '정보 없음'}
+                {userData?.mmr?.winRate !== undefined ? `${Math.round(userData.mmr.winRate * 100)}%` : '미등록'}
               </span>
             </div>
           </div>

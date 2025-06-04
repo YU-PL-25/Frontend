@@ -65,9 +65,9 @@ function Header() {
         <i className="bi bi-bell" title="알림"></i>
 
         {!isAuthenticated ? (
-          <button className="login-btn">
-            <Link to="/login" className="login-link">로그인</Link>
-          </button>
+          <Link to="/login" className="header-login-link">
+            <button className="header-login-btn">로그인</button>
+          </Link>
         ) : (
           <div className="profile-container" ref={dropdownRef}>
             <button className="profile-btn" onClick={toggleDropdown}>
