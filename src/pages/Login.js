@@ -1,10 +1,33 @@
-import React from 'react';
+import React, {useState} from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 import logo from '../assets/shuttleplay_main_logo.png';
 
 function LoginPage() {
+  // 입력 양식을 json 형태로 백엔드 서버에 전달
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();   // form  전송 방지
+
+  try {
+    const response = await axios.post('/login', {
+      email: email,
+      password: password
+    }, {
+      headers: { 'Content-Type' : 'application/json' },
+      withCredentials: true   // 세션 쿠키 전달
+    });
+
+    alert(response.data.message);
+    navigate('/main');    // 로그인 성공 시 메인화면으로 이동
+  } catch (error) {
+    alert(error.response?.data?.error || '로그인에 실패했습니다.');
+  }
+};
 
   return (
     <div className="login-page">
@@ -18,12 +41,12 @@ function LoginPage() {
         </Link>
         <h2 className="subtitle">로그인</h2>
 
-        <form method="POST" action="/login" className="login-form">
-          <label htmlFor="username">아이디</label>
-          <input type="text" id="username" name="username" placeholder="아이디" required/>
+        <form onSubmit={handleLogin} className="login-form">
+          <label htmlFor="email">아이디(email)</label>
+          <input type="email" id="email" name="email" placeholder="아이디(이메일)" value={email} onChange={(e) => setEmail(e.target.value)} required/>
 
           <label htmlFor="password">비밀번호</label>
-          <input type="password" id="password" name="password" placeholder="비밀번호" required/>
+          <input type="password" id="password" name="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} required/>
 
           <div className="options">
             <label><input type="checkbox" name="remember"/>자동로그인</label>
