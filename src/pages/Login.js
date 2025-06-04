@@ -26,6 +26,7 @@ function LoginPage() {
 
       // 상태 저장
       dispatch(loginSuccess(response.data));
+      localStorage.setItem('user', JSON.stringify(response.data));
 
       // 페이지 이동
       alert(response.data.message);
