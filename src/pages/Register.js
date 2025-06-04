@@ -12,6 +12,7 @@ function Register() {
     name: '',
     nickname: '',
     gender: '',
+    loginId: '',
     email: '',
     phone: '',
     password: '',
@@ -27,19 +28,33 @@ function Register() {
   };
 
   const next = () => {
-    const { name, email, phone, password, nickname } = form;
+    const { name, loginId, email, phone, password, nickname } = form;
     const nameReg  = /^[가-힣a-zA-Z]{2,}$/;
+    const idReg = /^[a-z][a-z0-9._]{3,19}$/;
     const emailReg = /^[\w.+-]+@[a-z\d-]+(\.[a-z\d-]+)+$/i;
     const phoneReg = /^01[016789]-\d{3,4}-\d{4}$/;
     const passReg  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
-
-    if (!name || !email || !phone || !password || !nickname) {
+    const forbiddenWords = ['admin', 'root', 'master', 'test', 'staff', 'null'];
+    
+    if (!name || !loginId || !email || !phone || !password || !nickname) {
       setError('모든 필수 항목을 입력해 주세요.');
       return;
     }
 
     if (!nameReg.test(name)) {
       setError('이름은 한글·영문 2자 이상이어야 합니다.');
+      return;
+    }
+
+    function isForbiddenId(loginId) {
+      return forbiddenWords.some(word => loginId.toLowerCase().includes(word));
+    }
+
+    if (!idReg.test(loginId)) {
+      setError('아이디는 영문 소문자로 시작, 4~20자 이내의 영문/숫자/밑줄/마침표만 사용할 수 있습니다.');
+      return;
+    } else if (isForbiddenId(loginId)) {
+      setError('사용할 수 없는 단어가 포함된 아이디입니다.');
       return;
     }
 
@@ -95,6 +110,9 @@ function Register() {
           <form className="register-form" onSubmit={e => e.preventDefault()}>
             <label htmlFor="name">이름</label>
             <input id="name" name="name" value={form.name} onChange={handleChange} placeholder="홍길동" required/>
+
+            <label htmlFor="loginId">아이디</label>
+            <input id="loginId" name="loginId" value={form.loginId} onChange={handleChange} placeholder="영문 소문자로 시작, 4-20자, 영문·숫자·특수문자(_)·(.)·(@)만 허용" required/>
 
             <label htmlFor="email">이메일</label>
             <input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="abcd@abcd.com" required/>
