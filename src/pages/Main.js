@@ -5,6 +5,7 @@ import '../styles/Main.css';
 import slide1 from '../assets/mainpage_img1.png';
 import slide2 from '../assets/mainpage_img2.png';
 import slide3 from '../assets/mainpage_img3.png';
+import { Link } from 'react-router-dom';
 
 const slides = [slide1, slide2, slide3];
 
@@ -152,11 +153,11 @@ function Main() {
                 <span className="quick-desc">주변 클럽과 시설 위치를 확인하세요</span>
               </a>
 
-              <a href="#!" className="quick-btn">
+              <Link to="/pre-matching" className="quick-btn pre-matching-link">
                 <i className="bi bi-broadcast-pin quick-icon"></i>
                 <span className="quick-label">사전 매칭</span>
                 <span className="quick-desc">조건에 맞는 상대를 미리 찾아보세요</span>
-              </a>
+              </Link>
             </div>
           </section>
         </main>
