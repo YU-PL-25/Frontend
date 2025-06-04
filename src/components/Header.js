@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import '../styles/Header.css';
 import logoImage from '../assets/shuttleplay_main_logo.png';
+import axios from 'axios';
 
 function Header() {
   const { isAuthenticated } = useSelector(state => state.auth);
@@ -12,10 +13,16 @@ function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    setDropdownOpen(false);
-    navigate('/main');
+  const handleLogout = async () => {
+    try {
+      await axios.post('/logout');
+      localStorage.removeItem('user');
+      dispatch(logout());
+      setDropdownOpen(false);
+      navigate('/main');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
   };
 
   const toggleDropdown = () => {

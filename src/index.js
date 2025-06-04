@@ -5,6 +5,7 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './redux/store'; 
+import { loginSuccess } from './redux/authSlice';
 
 // 웹 브라우저 탭 제목에 들어갈 문구를 배열로 정의
 const details = [
@@ -18,6 +19,11 @@ const details = [
 // 랜덤으로 문구를 선택하여 탭 제목에 반영
 const idx = Math.floor(Math.random() * details.length);
 document.title = "셔틀플레이 | " + details[idx];
+
+const savedUser = localStorage.getItem('user');
+if (savedUser) {
+  store.dispatch(loginSuccess(JSON.parse(savedUser)));
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
