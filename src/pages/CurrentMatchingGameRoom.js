@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import '../styles/CurrentMatching.css';
+import '../styles/CurrentMatchingGameRoom.css';
 import { MapPin, Clock, Users, UserPlus, Plus, Settings } from "lucide-react";
 
 // 배지 컴포넌트
@@ -39,10 +39,12 @@ export default function CourtMatching() {
       createdAt: new Date(Date.now() - 300000),
     },
   ]);
+
   const [waitlist, setWaitlist] = useState([
     { id: "5", name: "David Kim", skillLevel: "Intermediate", waitTime: 3 },
     { id: "6", name: "Lisa Zhang", skillLevel: "Advanced", waitTime: 20 },
   ]);
+
   const [autoMatchEnabled, setAutoMatchEnabled] = useState(true);
   const [manualMatchOpen, setManualMatchOpen] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -151,7 +153,7 @@ export default function CourtMatching() {
 
   return (
     <div className="cm-current-matching-wrapper">
-      <Header />
+      <Header/>
 
       <div className="cm-current-matching-content">
         <div className="cm-court-matching-wrap">
@@ -326,7 +328,7 @@ export default function CourtMatching() {
         </div>
       </div>
 
-      <Footer />
+      <Footer/>
     </div>
   );
 }
