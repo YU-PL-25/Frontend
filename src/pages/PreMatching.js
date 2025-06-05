@@ -157,7 +157,7 @@ function PreMatching() {
                     </div>
                     <div className="pre-card-bottom">
                       <Link
-                        to={`/gameroom/${room.id}`}
+                        to={`/pre-matching/gameroom/${room.id}`}
                         onClick={() => localStorage.setItem('selectedRoom', JSON.stringify(room))}
                       >
                         <button className="pre-enter-btn">입장</button>
