@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import '../styles/CurrentMatching.css';
 import axios from 'axios';
 
-function Reservation() {
+function CurrentMatching() {
   const [gameRooms, setGameRooms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const roomsPerPage = 5;
@@ -126,4 +126,4 @@ function Reservation() {
   );
 }
 
-export default Reservation;
+export default CurrentMatching;
