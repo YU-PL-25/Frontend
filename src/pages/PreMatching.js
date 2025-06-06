@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/PreMatching.css';
 import logo from '../assets/shuttleplay_main_logo.png';
 import AutoGameRoomMatching from './AutoGameRoomMatching';
+import { useSelector } from 'react-redux';
 
 const sampleVenues = [
   { name: '옥산배드민턴장', address: '경북 경산시 옥산로 120', lat: 35.816742, lng: 128.742983 },
@@ -193,7 +194,7 @@ function PreMatching() {
                       <div>상태: {room.status}</div>
                     </div>
                     <div className="pre-card-bottom">
-                      <Link to={`/gameroom/${room.id}`} onClick={() => handleEnter(room)}>
+                      <Link to={`/pre-matching/gameroom/${room.id}`} onClick={() => handleEnter(room)}>
                         <button className="pre-enter-btn">입장</button>
                       </Link>
                     </div>

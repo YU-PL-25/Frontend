@@ -34,7 +34,7 @@ function App() {
         <Route path="/community" element={<Community/>}/>
         <Route path="/mypage" element={<MyPage/>}/>
         <Route path="/mypage/match-history" element={<MatchHistory/>}/>
-        <Route path="/gameroom/:id" element={<GameRoomDetail/>}/>
+        <Route path="/pre-matching/gameroom/:id" element={<GameRoomDetail/>}/>
       </Routes>
     </Router>
   );
