@@ -21,7 +21,7 @@ const skillColor = {
   Advanced: "red"
 };
 
-export default function CourtMatching() {
+export default function CurrentMatchingGameRoom() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedGameType, setSelectedGameType] = useState("Doubles");
   const [gameRooms, setGameRooms] = useState([
