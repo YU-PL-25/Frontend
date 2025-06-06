@@ -1,29 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatching.css';
+import axios from 'axios';
 
 function Reservation() {
-  const dummyRooms = [
-    { id: 1, title: '강남구 실내체육관 1번방', address: '서울 강남구 영동대로 123', players: 4 },
-    { id: 2, title: '서초구 국민체육센터 A코트', address: '서울 서초구 반포대로 45', players: 6 },
-    { id: 3, title: '송파구 배드민턴장 메인홀', address: '서울 송파구 중대로 100', players: 2 },
-  ];
-
+  const [gameRooms, setGameRooms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const roomsPerPage = 5;
-  const totalPages = Math.ceil(dummyRooms.length / roomsPerPage);
   const indexOfLast = currentPage * roomsPerPage;
   const indexOfFirst = indexOfLast - roomsPerPage;
-  const currentRooms = dummyRooms.slice(indexOfFirst, indexOfLast);
-
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
+  const currentRooms = gameRooms.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.max(1, Math.ceil(gameRooms.length / roomsPerPage));
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -33,6 +21,31 @@ function Reservation() {
     courtName: '',
     courtAddress: ''
   });
+
+  const fetchRooms = async () => {
+    try {
+      const response = await axios.get('/api/game-room', { withCredentials: true });
+      if (response.data.status === 200) {
+        setGameRooms(response.data.data);
+      } else {
+        console.error('API 응답 오류:', response.data.message);
+      }
+    } catch (err) {
+      console.error('게임방 목록 불러오기 실패:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,14 +78,16 @@ function Reservation() {
             <div className="cml-room-list-header">
               <button className="cml-create-room-btn" onClick={() => setShowModal(true)}>+ 방 생성</button>
             </div>
-            
+
             <div className="cml-room-list">
               {currentRooms.map((room) => (
-                <div className="cml-room-card" key={room.id}>
+                <div className="cml-room-card" key={room.gameRoomId}>
                   <div className="cml-room-info">
                     <h3>{room.title}</h3>
-                    <p>{room.address}</p>
-                    <p>현재 인원: {room.players}명</p>
+                    <p>현재 인원: {room.participants?.length || 0}명</p>
+                    <p>
+                      {room.location?.courtName} · {room.location?.userLocation} · {room.date}
+                    </p>
                   </div>
                   <div className="cml-room-actions">
                     <button className="cml-join-btn">방 참가</button>
