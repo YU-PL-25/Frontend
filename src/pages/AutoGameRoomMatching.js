@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import "../styles/AutoGameRoomMatching.css";
 
 const AutoGameRoomMatching = () => {
@@ -23,6 +24,14 @@ const AutoGameRoomMatching = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // 30분 단위 시간 배열 및 react-select용 옵션 생성
+  const timeOptions = [];
+  for (let hour = 0; hour < 24; hour++) {
+    timeOptions.push(`${hour.toString().padStart(2, '0')}:00`);
+    timeOptions.push(`${hour.toString().padStart(2, '0')}:30`);
+  }
+  const customTimeOptions = timeOptions.map(time => ({ value: time, label: time }));
+
   const handleMatching = () => {
     setIsModalOpen(true);
     setTimeout(() => {
@@ -43,11 +52,11 @@ const AutoGameRoomMatching = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    window.location.href = "/pre-matching"; // 완전 이동
+    window.location.href = "/pre-matching";
   };
 
   const handleLeave = () => {
-    window.location.href = "/pre-matching"; // 완전 이동
+    window.location.href = "/pre-matching";
   };
 
   return (
@@ -93,11 +102,18 @@ const AutoGameRoomMatching = () => {
         </div>
         <div>
           <label className="agr-auto-matching-label">시간</label>
-          <input
-            type="time"
-            className="agr-auto-matching-input"
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
+          <Select
+            options={customTimeOptions}
+            value={customTimeOptions.find(opt => opt.value === selectedTime)}
+            onChange={option => setSelectedTime(option.value)}
+            menuPlacement="bottom"   // **항상 아래로 펼쳐짐!**
+            styles={{
+              container: provided => ({ ...provided, width: "180px" }),
+              menu: provided => ({ ...provided, zIndex: 9999 }),
+              control: provided => ({ ...provided, minHeight: "38px" })
+            }}
+            placeholder="시간 선택"
+            isSearchable={false}
           />
         </div>
         <div>
@@ -118,7 +134,7 @@ const AutoGameRoomMatching = () => {
           <input
             type="range"
             min="50"
-            max="1000"
+            max="300"
             step="50"
             value={maxDistance}
             onChange={(e) => setMaxDistance(Number(e.target.value))}
@@ -151,7 +167,7 @@ const AutoGameRoomMatching = () => {
       <div className="agr-auto-matching-info">
         <p>💡 조건에 맞는 게임방이 자동으로 생성됩니다.</p>
         <ul>
-          <li>선택한 날짜와 시간대 기준으로 ±30분</li>
+          <li>선택한 날짜와 시간대 동일한 사용자와 매칭</li>
           <li>{maxDistance}m 이내의 위치에서 매칭</li>
           <li>선택한 게임 유형에 따라 인원이 충족되면 자동 생성</li>
         </ul>
