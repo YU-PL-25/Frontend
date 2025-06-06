@@ -216,18 +216,19 @@
   transition: all 0.2s ease;
 }
 
-.grd-ready-button {
+/*.grd-ready-button {
   background: #22c55e;
   color: white;
-}
-
-.grd-ready-button:hover {
-  background: #16a34a;
-}
+}*/
 
 .grd-start-button {
-  background: #af1aaa;
+  background: #16a34a;
   color: white;
+  transition: background 0.15s ease;
+}
+
+.grd-start-button:active {
+  background: #15803d; /* 더 진한 초록 */
 }
 
 .grd-start-button:disabled {
@@ -238,9 +239,20 @@
 .grd-chat-button {
   background: #3b82f6;
   color: white;
+  transition: background 0.15s ease;
+}
+
+.grd-chat-button:active {
+  background: #2563eb; /* 더 진한 파랑 */
 }
 
 .grd-leave-button {
   background: #ef4444;
   color: white;
+  transition: background 0.15s ease;
 }
+
+.grd-leave-button:active {
+  background: #dc2626; /* 더 진한 빨강 */
+}
+
