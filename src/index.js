@@ -24,7 +24,7 @@ const savedUser = localStorage.getItem('user');
 if (savedUser) {
   const parsed = JSON.parse(savedUser);
   if (parsed.userId) {
-    store.dispatch(loginSuccess({ id: parsed.userId }));
+    store.dispatch(loginSuccess({ userId: parsed.userId }));
   }
 }
 
