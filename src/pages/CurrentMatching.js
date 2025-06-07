@@ -132,20 +132,52 @@ function CurrentMatching() {
             </div>
 
             <div className="cml-room-list">
-              {currentRooms.map((room) => (
-                <div className="cml-room-card" key={room.gameRoomId}>
-                  <div className="cml-room-info">
-                    <h3>{room.title}</h3>
-                    <p>현재 인원: {room.participants?.length || 0}명</p>
-                    <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
+              {currentRooms.map((room) => {
+                const alreadyJoined = room.participants?.some(p => p.userId === user?.userId);
+
+                return (
+                  <div className="cml-room-card" key={room.gameRoomId}>
+                    <div className="cml-room-info">
+                      <h3>{room.title}</h3>
+                      <p>현재 인원: {room.participants?.length || 0}명</p>
+                      <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
+                    </div>
+                    <div className="cml-room-actions">
+                      {alreadyJoined ? (
+                        <button
+                          className="cml-join-btn"
+                          onClick={() => navigate(`/current-matching/gameroom/${room.gameRoomId}`)}>
+                          게임방 조회
+                        </button>
+                      ) : (
+                        <button
+                          className="cml-join-btn"
+                          onClick={async () => {
+                            try {
+                              const res = await axios.post(
+                                `/api/rooms/${room.gameRoomId}/join`,
+                                { userId: user?.userId },
+                                { withCredentials: true }
+                              );
+
+                              if (res.data.status === 200) {
+                                alert('참가 요청 성공!');
+                                navigate(`/current-matching/gameroom/${room.gameRoomId}`);
+                              } else {
+                                alert(res.data.message || '참가 요청 실패');
+                              }
+                            } catch (err) {
+                              alert('참가 요청 중 오류가 발생했습니다.');
+                              console.error(err);
+                            }
+                          }}>
+                          방 참가
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="cml-room-actions">
-                    <button className="cml-join-btn" onClick={() => {navigate(`/current-matching/gameroom/${room.gameRoomId}`)}}>
-                      방 참가
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="cml-pagination">
