@@ -15,6 +15,7 @@ import Community from './pages/Community';
 import GameRoomDetail from './pages/GameRoomDetail';
 import MyPage from './pages/MyPage';
 import MatchHistory from './pages/MatchHistory';
+import CurrentMatchingGameRoom from './pages/CurrentMatchingGameRoom';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/mypage" element={<MyPage/>}/>
         <Route path="/mypage/match-history" element={<MatchHistory/>}/>
         <Route path="/pre-matching/gameroom/:id" element={<GameRoomDetail/>}/>
+        <Route path="/current-matching/gameroom/:id" element={<CurrentMatchingGameRoom/>}/>
       </Routes>
     </Router>
   );

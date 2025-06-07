@@ -3,16 +3,20 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatching.css';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function Reservation() {
+function CurrentMatching() {
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const [gameRooms, setGameRooms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const roomsPerPage = 5;
   const indexOfLast = currentPage * roomsPerPage;
   const indexOfFirst = indexOfLast - roomsPerPage;
   const currentRooms = gameRooms.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.max(1, Math.ceil(gameRooms.length / roomsPerPage));
-  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     userLocation: '',
@@ -27,8 +31,6 @@ function Reservation() {
       const response = await axios.get('/api/game-room', { withCredentials: true });
       if (response.data.status === 200) {
         setGameRooms(response.data.data);
-      } else {
-        console.error('API 응답 오류:', response.data.message);
       }
     } catch (err) {
       console.error('게임방 목록 불러오기 실패:', err);
@@ -39,44 +41,94 @@ function Reservation() {
     fetchRooms();
   }, []);
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCreate = () => {
-    console.log("방 생성 요청 데이터:", formData);
-    setShowModal(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleCreate = async () => {
+    if (!isAuthenticated || !user?.userId) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const payload = {
+      masterId: user?.userId,
+      title: formData.title, // 백엔드 수정 필요
+      location: {
+        userLocation: formData.userLocation,
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+        courtName: formData.courtName,
+        courtAddress: formData.courtAddress
+      }
+    };
+
+    try {
+      const res = await axios.post('/api/game-room/current-matching', payload, {
+        withCredentials: true
+      });
+
+      if (res.data.status === 200) {
+        alert("방이 성공적으로 생성되었습니다.");
+        setFormData({
+          title: '',
+          userLocation: '',
+          latitude: '',
+          longitude: '',
+          courtName: '',
+          courtAddress: ''
+        });
+        setShowModal(false);
+        await fetchRooms();
+
+        if (res.data.gameRoomId) {
+          navigate(`/current-matching/gameroom/${res.data.gameRoomId}`);
+        }
+      } else {
+        alert("방 생성 실패: " + res.data.message);
+      }
+    } catch (err) {
+      console.error("방 생성 오류:", err);
+      alert("방 생성 중 오류가 발생했습니다.");
+    }
   };
+
+  const handlePrev = () => setCurrentPage((prev) => Math.max(1, prev - 1));
+  const handleNext = () => setCurrentPage((prev) => Math.min(totalPages, prev + 1));
 
   return (
     <div className="cml-wrapper">
       <Header/>
-
       <div className="cml-content">
         <div className="cml-body-wrapper">
           <div className="cml-header-box">
-            <div className="cml-header">
-              <div className="cml-header-left">
-                <h2 className="cml-title">현장 매칭 모드</h2>
-                <p className="cml-subtitle">
-                  현장에서 원하는 방에 들어가 자동 또는 수동으로 게임 매칭을 잡아보세요.
-                </p>
-              </div>
+            <div className="cml-header-left">
+              <h2 className="cml-title">현장 매칭 모드</h2>
+              <p className="cml-subtitle">현장에서 원하는 방에 들어가 게임 매칭을 진행하세요.</p>
             </div>
           </div>
 
           <div className="cml-room-list-box">
             <div className="cml-room-list-header">
-              <button className="cml-create-room-btn" onClick={() => setShowModal(true)}>+ 방 생성</button>
+              <button className="cml-create-room-btn" onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login', { state: { from: location } });
+                  return;
+                }
+
+                if (!user?.userId) {
+                  alert("로그인 정보가 불완전합니다. 새로고침 후 다시 시도해주세요.");
+                  return;
+                }
+
+                setShowModal(true);
+              }}>
+                + 방 생성
+              </button>
             </div>
 
             <div className="cml-room-list">
@@ -85,12 +137,12 @@ function Reservation() {
                   <div className="cml-room-info">
                     <h3>{room.title}</h3>
                     <p>현재 인원: {room.participants?.length || 0}명</p>
-                    <p>
-                      {room.location?.courtName} · {room.location?.userLocation} · {room.date}
-                    </p>
+                    <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
                   </div>
                   <div className="cml-room-actions">
-                    <button className="cml-join-btn">방 참가</button>
+                    <button className="cml-join-btn" onClick={() => {navigate(`/current-matching/gameroom/${room.gameRoomId}`)}}>
+                      방 참가
+                    </button>
                   </div>
                 </div>
               ))}
@@ -104,7 +156,6 @@ function Reservation() {
           </div>
         </div>
       </div>
-
       <Footer/>
 
       {showModal && (
@@ -126,4 +177,4 @@ function Reservation() {
   );
 }
 
-export default Reservation;
+export default CurrentMatching;
