@@ -2,159 +2,309 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
-import { MapPin, Clock, Users, UserPlus, Plus, Settings } from "lucide-react";
+import { MapPin, Clock, Users, UserPlus, Plus, X } from "lucide-react";
 
-// 배지 컴포넌트
+// 컴포넌트들
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
 );
-
-// 버튼 컴포넌트
-const Button = ({ children, ...props }) => (
-  <button className="cm-btn" {...props}>{children}</button>
+const Button = ({ children, className = "", ...props }) => (
+  <button className={`cm-btn ${className}`} {...props}>{children}</button>
 );
+const rankColor = {
+  SS: "purple",
+  S: "red",
+  A: "orange",
+  B: "yellow",
+  C: "green",
+  D: "blue",
+  E: "gray"
+};
+const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
+const autoNames = [
+  "이서준", "김민지", "최시우", "박예린", "정도윤",
+  "한유진", "유하린", "신동윤", "노지민", "배도현"
+];
+const rankLevels = ["SS", "S", "A", "B", "C", "D", "E"];
 
-// 실력 색상 매핑
-const skillColor = {
-  Beginner: "green",
-  Intermediate: "yellow",
-  Advanced: "red"
+// 단식/복식 선택 모달 (자동 매칭 등록만)
+const SelectTypeModal = ({ open, onClose, onSelect }) => {
+  if (!open) return null;
+  return (
+    <div className="cm-modal-bg">
+      <div className="cm-modal-content" style={{maxWidth:330}}>
+        <div className="cm-modal-header">
+          <b>게임 유형 선택</b>
+          <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 26, marginBottom: 18 }}>
+          <Button onClick={() => { onSelect('Singles'); }} style={{fontWeight:700}}>단식</Button>
+          <Button onClick={() => { onSelect('Doubles'); }}>복식</Button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default function CourtMatching() {
+// 경기 결과 모달
+const GameResultModal = ({
+  visible, onClose, room, onFinishGame
+}) => {
+  const [myScore, setMyScore] = useState('');
+  const [opponentScore, setOpponentScore] = useState('');
+
+  const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
+  const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
+
+  if (!visible || !room) return null;
+
+  return (
+    <div className="cm-modal-bg">
+      <div className="cm-modal-content">
+        <div className="cm-modal-header">
+          <span role="img" aria-label="search" style={{fontSize:18}}>🔍</span>
+          <b style={{marginLeft: 7}}>경기 상세 정보</b>
+          <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
+        </div>
+        <div className="cm-modal-detail">
+          <div>{room.courtName} / {gameTypeLabel[room.gameType]}</div>
+          <div>{room.createdAt.toLocaleDateString()} {room.createdAt.toLocaleTimeString()}</div>
+        </div>
+        <div className="cm-modal-teams">
+          <div className="cm-modal-team">
+            <h4>내 팀</h4>
+            {myTeam.map(user => (
+              <div key={user.id} className="cm-modal-player-row">
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>
+                  {user.rankLevel}
+                </Badge>
+              </div>
+            ))}
+            <div className="cm-modal-score-input">
+              점수: <input
+                type="number"
+                value={myScore}
+                min={0}
+                onChange={e => setMyScore(e.target.value)}
+                style={{width: 55, marginLeft: 4}}
+              />
+            </div>
+          </div>
+          <div className="cm-modal-team">
+            <h4>상대 팀</h4>
+            {opponentTeam.map(user => (
+              <div key={user.id} className="cm-modal-player-row">
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>
+                  {user.rankLevel}
+                </Badge>
+              </div>
+            ))}
+            <div className="cm-modal-score-input">
+              점수: <input
+                type="number"
+                value={opponentScore}
+                min={0}
+                onChange={e => setOpponentScore(e.target.value)}
+                style={{width: 55, marginLeft: 4}}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="cm-modal-footer">
+          <Button
+            className="cm-finish-btn"
+            onClick={() => {
+              if (myScore === "" || opponentScore === "") {
+                alert("양팀 점수를 모두 입력하세요.");
+                return;
+              }
+              onFinishGame(myScore, opponentScore);
+              onClose();
+            }}
+          >게임 종료</Button>
+          <Button
+            className="cm-close-btn"
+            onClick={onClose}
+            style={{marginLeft:10, background:"#ececec", color:"#222"}}
+          >닫기</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ======= 본문 =======
+export default function CurrentMatchingGameRoom() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedGameType, setSelectedGameType] = useState("Doubles");
   const [gameRooms, setGameRooms] = useState([
     {
       id: "room1",
       courtName: "영남대학교 체육관",
       gameType: "Doubles",
       players: [
-        { id: "p1", name: "John Doe", skillLevel: "Advanced" },
-        { id: "p2", name: "Jane Smith", skillLevel: "Intermediate" },
+        { id: "p1", name: "홍길동", rankLevel: "S", type: "manual" },
+        { id: "p2", name: "김철수", rankLevel: "A", type: "manual" },
+        { id: "p3", name: "박영희", rankLevel: "C", type: "manual" },
+        { id: "p4", name: "정철민", rankLevel: "B", type: "manual" }
       ],
       maxPlayers: 4,
       status: "Waiting",
-      createdBy: "John Doe",
+      createdBy: "홍길동",
       createdAt: new Date(Date.now() - 300000),
+      isMine: true
     },
   ]);
-
-  const [waitlist, setWaitlist] = useState([
-    { id: "5", name: "David Kim", skillLevel: "Intermediate", waitTime: 3 },
-    { id: "6", name: "Lisa Zhang", skillLevel: "Advanced", waitTime: 20 },
+  const [manualWaitlist, setManualWaitlist] = useState([
+    { id: "6", name: "이미경", rankLevel: "B", waitTime: 20, type: "manual" },
+    { id: "7", name: "이현우", rankLevel: "A", waitTime: 17, type: "manual" }
   ]);
-
-  const [autoMatchEnabled, setAutoMatchEnabled] = useState(true);
-  const [manualMatchOpen, setManualMatchOpen] = useState(false);
+  const [autoWaitlist, setAutoWaitlist] = useState([
+    { id: "8", name: "조유정", rankLevel: "SS", waitTime: 13, gameType: "Singles", type: "auto" },
+    { id: "9", name: "정지훈", rankLevel: "C", waitTime: 9, gameType: "Doubles", type: "auto" },
+    { id: "10", name: "황유림", rankLevel: "D", waitTime: 7, gameType: "Doubles", type: "auto" },
+    { id: "11", name: "최은지", rankLevel: "E", waitTime: 4, gameType: "Singles", type: "auto" }
+  ]);
   const [selected, setSelected] = useState([]);
+  // 모달
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalRoom, setModalRoom] = useState(null);
+  // 단식/복식 모달 (자동만)
+  const [modalTypeOpen, setModalTypeOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const handleCreateRoom = () => {
-    const newRoom = {
-      id: `room${Date.now()}`,
-      courtName: "영남대학교 체육관",
-      gameType: selectedGameType,
-      players: [],
-      maxPlayers: selectedGameType === "Singles" ? 2 : 4,
-      status: "Waiting",
-      createdBy: "You",
-      createdAt: new Date(),
-    };
-    setGameRooms(prev => [...prev, newRoom]);
-  };
-
-  const handleJoinRoom = (roomId) => {
-    if (waitlist.length === 0) return;
-    setGameRooms(prev =>
-      prev.map(room => {
-        if (room.id === roomId && room.players.length < room.maxPlayers) {
-          const player = waitlist[0];
-          const updatedPlayers = [...room.players, player];
-          return {
-            ...room,
-            players: updatedPlayers,
-            status: updatedPlayers.length === room.maxPlayers ? "Ready" : "Waiting",
-          };
-        }
-        return room;
-      })
-    );
-    setWaitlist(prev => prev.slice(1));
-  };
-
+  // 방장만 내보내기
   const handleRemovePlayer = (roomId, playerId) => {
-    let removedPlayer = null;
     setGameRooms(prev =>
       prev.map(room => {
-        if (room.id === roomId) {
-          removedPlayer = room.players.find(p => p.id === playerId);
+        if (room.id === roomId && room.isMine) {
+          const removed = room.players.find(p => p.id === playerId);
+          if (removed) {
+            if (removed.type === "manual") setManualWaitlist(prev => [...prev, removed]);
+            else setAutoWaitlist(prev => [...prev, removed]);
+          }
           return {
             ...room,
             players: room.players.filter(p => p.id !== playerId),
-            status: "Waiting",
+            status: "Waiting"
           };
         }
         return room;
       })
     );
-    if (removedPlayer) {
-      setWaitlist(prev => [...prev, removedPlayer]);
-    }
   };
 
-  const handleWaitlistJoin = (playerId, gameType) => {
-    const targetRoom = gameRooms.find(
-      room =>
-        room.gameType === gameType &&
-        room.status === "Waiting" &&
-        room.players.length < room.maxPlayers
-    );
-    if (!targetRoom) return;
-    const player = waitlist.find(p => p.id === playerId);
-    if (!player) return;
-    setGameRooms(prev =>
-      prev.map(room =>
-        room.id === targetRoom.id
-          ? {
-              ...room,
-              players: [...room.players, player],
-              status: room.players.length + 1 === room.maxPlayers ? "Ready" : "Waiting",
-            }
-          : room
-      )
-    );
-    setWaitlist(prev => prev.filter(p => p.id !== playerId));
+  // 수동 등록 → 타입 없이 랜덤 유저 추가
+  const handleManualRegister = () => {
+    const name = autoNames[Math.floor(Math.random() * autoNames.length)];
+    const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
+    setManualWaitlist(prev => [
+      ...prev,
+      { id: `${Date.now()}`, name, rankLevel, waitTime: 0, type: "manual" }
+    ]);
   };
 
+  // 자동 등록 → 모달
+  const handleAutoRegister = () => setModalTypeOpen(true);
+
+  // 자동 모달에서 유형 선택시 대기자 추가
+  const handleAddWaitlistByType = (gameType) => {
+    const name = autoNames[Math.floor(Math.random() * autoNames.length)];
+    const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
+    setAutoWaitlist(prev => [
+      ...prev,
+      { id: `${Date.now()}`, name, rankLevel, waitTime: 0, gameType, type: "auto" }
+    ]);
+    setModalTypeOpen(false);
+  };
+
+  // 수동 매칭(체크박스 선택): 2명=단식, 4명=복식
   const handleManualMatchCreate = () => {
-    if (selected.length < 2) return alert('최소 2명을 선택하세요!');
+    if (selected.length !== 2 && selected.length !== 4) return;
     const gameType = selected.length === 2 ? "Singles" : "Doubles";
-    const players = waitlist.filter(p => selected.includes(p.id));
-    const newRoom = {
-      id: `manual-${Date.now()}`,
-      courtName: "영남대학교 체육관",
-      gameType,
-      players,
-      maxPlayers: gameType === "Singles" ? 2 : 4,
-      status: players.length === (gameType === "Singles" ? 2 : 4) ? "Ready" : "Waiting",
-      createdBy: "You",
-      createdAt: new Date(),
-    };
-    setGameRooms(prev => [...prev, newRoom]);
-    setWaitlist(prev => prev.filter(p => !selected.includes(p.id)));
+    const players = manualWaitlist.filter(p => selected.includes(p.id));
+    const newPlayers = players.map(p => ({ ...p, gameType })); // 방 내에는 타입 부여
+    setGameRooms(prev => [
+      ...prev,
+      {
+        id: `manual-${Date.now()}`,
+        courtName: "영남대학교 체육관",
+        gameType,
+        players: newPlayers,
+        maxPlayers: gameType === "Singles" ? 2 : 4,
+        status: "Ready",
+        createdBy: "You",
+        createdAt: new Date(),
+        isMine: true
+      }
+    ]);
+    setManualWaitlist(prev => prev.filter(p => !selected.includes(p.id)));
     setSelected([]);
-    setManualMatchOpen(false);
+  };
+
+  const handleManualMatchCancel = () => setSelected([]);
+
+  // 자동 매칭 시작(유형별 매칭)
+  const handleStartAutoMatch = () => {
+    ["Singles", "Doubles"].forEach(gameType => {
+      const filtered = autoWaitlist.filter(p => p.gameType === gameType);
+      const maxPlayers = gameType === "Singles" ? 2 : 4;
+      if (filtered.length >= maxPlayers) {
+        setGameRooms(prev => [
+          ...prev,
+          {
+            id: `auto-${Date.now()}`,
+            courtName: "영남대학교 체육관",
+            gameType,
+            players: filtered.slice(0, maxPlayers),
+            maxPlayers,
+            status: "Ready",
+            createdBy: "자동매칭",
+            createdAt: new Date(),
+            isMine: false
+          }
+        ]);
+        setAutoWaitlist(prev => prev.filter(p => !filtered.slice(0, maxPlayers).map(x => x.id).includes(p.id)));
+      }
+    });
+  };
+
+  const handleFinishGame = (myScore, opponentScore) => {
+    alert(`게임이 종료되었습니다!\n내 팀: ${myScore}점\n상대 팀: ${opponentScore}점`);
+  };
+
+  const handleCreateRoom = () => {
+    setGameRooms(prev => [
+      ...prev,
+      {
+        id: `room${Date.now()}`,
+        courtName: "영남대학교 체육관",
+        gameType: "Doubles",
+        players: [],
+        maxPlayers: 4,
+        status: "Waiting",
+        createdBy: "You",
+        createdAt: new Date(),
+        isMine: true
+      }
+    ]);
+  };
+
+  const handleCancelRegister = () => {
+    setManualWaitlist(prev => prev.length > 0 ? prev.slice(0, -1) : prev);
+    setAutoWaitlist(prev => prev.length > 0 ? prev.slice(0, -1) : prev);
   };
 
   return (
     <div className="cm-current-matching-wrapper">
-      <Header/>
-
+      <Header />
       <div className="cm-current-matching-content">
         <div className="cm-court-matching-wrap">
           {/* 상단 정보 카드 */}
@@ -178,8 +328,8 @@ export default function CourtMatching() {
             <div className="cm-checkbox-row">
               <input
                 type="checkbox"
-                checked={autoMatchEnabled}
-                onChange={e => setAutoMatchEnabled(e.target.checked)}
+                checked
+                disabled
                 id="auto-match"
               />
               <label htmlFor="auto-match" className="cm-auto-label">
@@ -194,7 +344,7 @@ export default function CourtMatching() {
             <div className="cm-game-rooms-card">
               <div className="cm-panel-header">
                 <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                <span>진행 중인 게임방</span>
+                <span>진행 중인 게임</span>
                 <Badge color="gray">{gameRooms.length}</Badge>
                 <Button className="cm-create-btn" onClick={handleCreateRoom}>
                   <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
@@ -206,7 +356,7 @@ export default function CourtMatching() {
                 <div key={room.id} className="cm-game-room-box">
                   <div className="cm-room-header-row">
                     <div>
-                      <Badge color="gray">{room.gameType === "Doubles" ? "복식" : "단식"}</Badge>
+                      <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
                       <Badge color={room.status === "Ready" ? "black" : "gray"}>
                         {room.status === "Ready" ? "매칭 완료" : "대기 중"}
                       </Badge>
@@ -220,24 +370,24 @@ export default function CourtMatching() {
                       <div key={player.id} className="cm-player-row">
                         <div className="cm-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
                         <span className="cm-player-name">{player.name}</span>
-                        <Badge color={skillColor[player.skillLevel]}>
-                          {player.skillLevel === "Beginner"
-                            ? "초급"
-                            : player.skillLevel === "Intermediate"
-                            ? "중급"
-                            : "고급"}
+                        <Badge color={rankColor[player.rankLevel]}>
+                          {player.rankLevel}
                         </Badge>
-                        <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
-                          내보내기
-                        </Button>
+                        {room.isMine && (
+                          <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
+                            내보내기
+                          </Button>
+                        )}
                       </div>
                     ))}
-                    {room.players.length < room.maxPlayers && waitlist.length > 0 && (
-                      <Button className="cm-join-btn" onClick={() => handleJoinRoom(room.id)}>
-                        <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
-                        입장
-                      </Button>
-                    )}
+                    <Button className="cm-join-btn"
+                      onClick={() => {
+                        setModalRoom(room);
+                        setModalOpen(true);
+                      }}>
+                      <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
+                      조회
+                    </Button>
                   </div>
                   <div className="cm-room-created-at">
                     {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
@@ -246,89 +396,115 @@ export default function CourtMatching() {
               ))}
             </div>
 
-            {/* 오른쪽: 대기열 */}
+            {/* 오른쪽: 대기자 명단 */}
             <div className="cm-waitlist-card">
-              <div className="cm-panel-header">
-                <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                <span>대기자 명단</span>
-                <Badge color="gray">{waitlist.length}</Badge>
-                <Button className="cm-manual-btn" onClick={() => setManualMatchOpen(true)}>
-                  <Settings style={{ width: 16, height: 16, marginRight: 5 }} />
-                  수동 매칭
-                </Button>
-              </div>
-              <div className="cm-panel-desc">해당 구장에서 참가를 기다리는 대기자 명단입니다</div>
-              <div className="cm-waitlist-list">
-                {waitlist.map(player => (
-                  <div className="cm-waitlist-row" key={player.id}>
-                    <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                    <span className="cm-wait-name">{player.name}</span>
-                    <Badge color={skillColor[player.skillLevel]}>
-                      {player.skillLevel === "Beginner"
-                        ? "초급"
-                        : player.skillLevel === "Intermediate"
-                        ? "중급"
-                        : "고급"}
-                    </Badge>
-                    <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
-                    <Button className="cm-wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Doubles")}>
-                      복식 입장
-                    </Button>
-                    <Button className="cm-wait-join-btn" onClick={() => handleWaitlistJoin(player.id, "Singles")}>
-                      단식 입장
-                    </Button>
+              {/* 수동 대기자 명단(위) */}
+              <div>
+                <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
+                  <Users style={{ width: 18, height: 18, marginRight: 5 }} />
+                  <span>수동 대기자 명단</span>
+                  <Badge color="gray">{manualWaitlist.length}</Badge>
+                  <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
+                    <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
                   </div>
-                ))}
+                </div>
+                <div className="cm-panel-desc">체크 후 선택 인원(2명=단식, 4명=복식)으로 방을 직접 만들 수 있습니다</div>
+                <div className="cm-waitlist-list">
+                  {manualWaitlist.map(player => (
+                    <div className="cm-waitlist-row" key={player.id}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(player.id)}
+                        onChange={() =>
+                          setSelected(selected.includes(player.id)
+                            ? selected.filter(id => id !== player.id)
+                            : [...selected, player.id])
+                        }
+                        style={{ marginRight: 8 }}
+                      />
+                      <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                      <span className="cm-wait-name">{player.name}</span>
+                      <Badge color={rankColor[player.rankLevel]}>
+                        {player.rankLevel}
+                      </Badge>
+                      <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <Button
+                    onClick={handleManualMatchCreate}
+                    disabled={selected.length !== 2 && selected.length !== 4}
+                    style={{
+                      marginRight: 8, background: '#e8e3fd', color: '#6930c3', borderRadius: 6
+                    }}
+                  >게임 매칭</Button>
+                  <Button
+                    onClick={handleManualMatchCancel}
+                    style={{
+                      background: '#ececec', color: '#555', borderRadius: 6
+                    }}
+                  >취소</Button>
+                </div>
+              </div>
+              <hr style={{ margin: "28px 0" }} />
+              {/* 자동 대기자 명단(아래) */}
+              <div>
+                <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
+                  <Users style={{ width: 18, height: 18, marginRight: 5 }} />
+                  <span>자동 대기자 명단</span>
+                  <Badge color="gray">{autoWaitlist.length}</Badge>
+                  <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
+                    <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
+                  </div>
+                </div>
+                <div className="cm-panel-desc">아래 명단은 자동으로 방이 생성됩니다</div>
+                <div className="cm-waitlist-list">
+                  {autoWaitlist.map(player => (
+                    <div className="cm-waitlist-row" key={player.id}>
+                      <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                      <span className="cm-wait-name">{player.name}</span>
+                      <Badge color={rankColor[player.rankLevel]}>
+                        {player.rankLevel}
+                      </Badge>
+                      <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
+                      <span style={{ marginLeft: 8, fontSize: 13, color: "#333" }}>
+                        {gameTypeLabel[player.gameType]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{
+                  marginTop: 14, display: "flex", justifyContent: "center"
+                }}>
+                  <button
+                    className="cm-create-btn"
+                    onClick={handleStartAutoMatch}
+                  >
+                    자동 매칭 시작
+                  </button>
+                </div>
+              </div>
+              <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
+                <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
               </div>
             </div>
           </div>
-
-          {/* 수동 매칭 모달 */}
-          {manualMatchOpen && (
-            <div className="cm-modal">
-              <h3 style={{ marginBottom: '18px' }}>수동 매칭할 대기자 선택</h3>
-              {waitlist.length === 0 ? (
-                <div style={{ marginBottom: 16, color: "#aaa" }}>대기자가 없습니다.</div>
-              ) : (
-                waitlist.map((w) => (
-                  <label key={w.id} style={{ display: 'block', marginBottom: 6, fontSize: 15 }}>
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(w.id)}
-                      onChange={() =>
-                        setSelected(selected.includes(w.id)
-                          ? selected.filter(id => id !== w.id)
-                          : [...selected, w.id])
-                      }
-                      style={{ marginRight: 6 }}
-                    />
-                    {w.name}
-                  </label>
-                ))
-              )}
-              <div style={{ marginTop: 16 }}>
-                <button
-                  onClick={handleManualMatchCreate}
-                  disabled={selected.length < 2}
-                  style={{
-                    marginRight: 8, background: '#e8e3fd', borderRadius: 6,
-                    fontWeight: 'bold', padding: '6px 18px', border: 'none', color: '#413c5a'
-                  }}
-                >방 생성</button>
-                <button
-                  onClick={() => { setManualMatchOpen(false); setSelected([]); }}
-                  style={{
-                    background: '#ececec', borderRadius: 6,
-                    fontWeight: 'bold', padding: '6px 18px', border: 'none', color: '#555'
-                  }}
-                >취소</button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-
-      <Footer/>
+      {/* ======== 모달들 ======== */}
+      <SelectTypeModal
+        open={modalTypeOpen}
+        onClose={() => setModalTypeOpen(false)}
+        onSelect={handleAddWaitlistByType}
+      />
+      <GameResultModal
+        visible={modalOpen}
+        room={modalRoom}
+        onClose={() => setModalOpen(false)}
+        onFinishGame={handleFinishGame}
+      />
+      <Footer />
     </div>
   );
 }
