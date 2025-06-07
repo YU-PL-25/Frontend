@@ -437,3 +437,50 @@
   background-color: #941094;  /* hover 시 더 진한 보라 (선택사항) */
 }
 
+.pre-modal-backdrop {
+  position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.2); z-index: 99; display: flex; align-items: center; justify-content: center;
+}
+.pre-modal {
+  background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.13); padding: 32px 24px; min-width: 340px;
+  max-width: 90vw;
+}
+.pre-modal-form input, .pre-modal-form select {
+  width: 100%; margin: 7px 0; padding: 10px; border-radius: 7px; border: 1px solid #ddd;
+}
+.pre-modal-create-btn, .pre-modal-cancel-btn {
+  width: 100%; margin: 13px 0 5px 0; padding: 12px 0; border-radius: 7px; border: none;
+  background: #af1aaa; color: #fff; font-weight: bold; font-size: 17px;
+}
+.pre-modal-cancel-btn {
+  background: #e0e0e0;
+}
+
+.pre-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  padding: 32px 24px;
+  min-width: 400px;  /* 최소/최대 고정값 ↑↓ 수정 가능 */
+  max-width: 450px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+.pre-modal-mode-btn {
+  flex: 1 1 0;
+  padding: 12px 0;
+  background: #f7f3fa;
+  border: none;
+  border-radius: 9px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #941094;
+  cursor: pointer;
+  transition: 0.18s;
+}
+.pre-modal-mode-btn.selected {
+  background: #af1aaa;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(174,56,215,0.10);
+}
