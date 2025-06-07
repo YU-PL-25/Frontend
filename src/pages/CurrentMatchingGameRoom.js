@@ -4,7 +4,6 @@ import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
 import { MapPin, Clock, Users, UserPlus, Plus, X } from "lucide-react";
 
-// 컴포넌트들
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
 );
@@ -46,7 +45,6 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
   );
 };
 
-// 경기 결과 모달
 const GameResultModal = ({
   visible, onClose, room, onFinishGame
 }) => {
@@ -159,20 +157,18 @@ export default function CurrentMatchingGameRoom() {
     },
   ]);
   const [manualWaitlist, setManualWaitlist] = useState([
-    { id: "6", name: "이미경", rankLevel: "B", waitTime: 20, type: "manual" },
-    { id: "7", name: "이현우", rankLevel: "A", waitTime: 17, type: "manual" }
+    { id: "6", name: "이미경", rankLevel: "B", type: "manual" },
+    { id: "7", name: "이현우", rankLevel: "A", type: "manual" }
   ]);
   const [autoWaitlist, setAutoWaitlist] = useState([
-    { id: "8", name: "조유정", rankLevel: "SS", waitTime: 13, gameType: "Singles", type: "auto" },
-    { id: "9", name: "정지훈", rankLevel: "C", waitTime: 9, gameType: "Doubles", type: "auto" },
-    { id: "10", name: "황유림", rankLevel: "D", waitTime: 7, gameType: "Doubles", type: "auto" },
-    { id: "11", name: "최은지", rankLevel: "E", waitTime: 4, gameType: "Singles", type: "auto" }
+    { id: "8", name: "조유정", rankLevel: "SS", gameType: "Singles", type: "auto" },
+    { id: "9", name: "정지훈", rankLevel: "C", gameType: "Doubles", type: "auto" },
+    { id: "10", name: "황유림", rankLevel: "D", gameType: "Doubles", type: "auto" },
+    { id: "11", name: "최은지", rankLevel: "E", gameType: "Singles", type: "auto" }
   ]);
   const [selected, setSelected] = useState([]);
-  // 모달
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
-  // 단식/복식 모달 (자동만)
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
 
   useEffect(() => {
@@ -201,26 +197,23 @@ export default function CurrentMatchingGameRoom() {
     );
   };
 
-  // 수동 등록 → 타입 없이 랜덤 유저 추가
   const handleManualRegister = () => {
     const name = autoNames[Math.floor(Math.random() * autoNames.length)];
     const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
     setManualWaitlist(prev => [
       ...prev,
-      { id: `${Date.now()}`, name, rankLevel, waitTime: 0, type: "manual" }
+      { id: `${Date.now()}`, name, rankLevel, type: "manual" }
     ]);
   };
 
-  // 자동 등록 → 모달
   const handleAutoRegister = () => setModalTypeOpen(true);
 
-  // 자동 모달에서 유형 선택시 대기자 추가
   const handleAddWaitlistByType = (gameType) => {
     const name = autoNames[Math.floor(Math.random() * autoNames.length)];
     const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
     setAutoWaitlist(prev => [
       ...prev,
-      { id: `${Date.now()}`, name, rankLevel, waitTime: 0, gameType, type: "auto" }
+      { id: `${Date.now()}`, name, rankLevel, gameType, type: "auto" }
     ]);
     setModalTypeOpen(false);
   };
@@ -251,7 +244,6 @@ export default function CurrentMatchingGameRoom() {
 
   const handleManualMatchCancel = () => setSelected([]);
 
-  // 자동 매칭 시작(유형별 매칭)
   const handleStartAutoMatch = () => {
     ["Singles", "Doubles"].forEach(gameType => {
       const filtered = autoWaitlist.filter(p => p.gameType === gameType);
@@ -427,7 +419,6 @@ export default function CurrentMatchingGameRoom() {
                       <Badge color={rankColor[player.rankLevel]}>
                         {player.rankLevel}
                       </Badge>
-                      <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
                     </div>
                   ))}
                 </div>
@@ -467,7 +458,6 @@ export default function CurrentMatchingGameRoom() {
                       <Badge color={rankColor[player.rankLevel]}>
                         {player.rankLevel}
                       </Badge>
-                      <span className="cm-wait-time">{player.waitTime}분 대기 중</span>
                       <span style={{ marginLeft: 8, fontSize: 13, color: "#333" }}>
                         {gameTypeLabel[player.gameType]}
                       </span>
