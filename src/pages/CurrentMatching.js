@@ -46,6 +46,9 @@ function CurrentMatching() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleCreate = async () => {
     if (!isAuthenticated || !user?.userId) {
       alert('로그인이 필요합니다.');
@@ -81,6 +84,10 @@ function CurrentMatching() {
         });
         setShowModal(false);
         await fetchRooms();
+
+        if (res.data.gameRoomId) {
+          navigate(`/current-matching/gameroom/${res.data.gameRoomId}`);
+        }
       } else {
         alert("방 생성 실패: " + res.data.message);
       }
@@ -92,8 +99,6 @@ function CurrentMatching() {
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(1, prev - 1));
   const handleNext = () => setCurrentPage((prev) => Math.min(totalPages, prev + 1));
-  const navigate = useNavigate();
-  const location = useLocation();
 
   return (
     <div className="cml-wrapper">
