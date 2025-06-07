@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess } from '../redux/authSlice';
 import '../styles/Login.css';
@@ -8,6 +8,8 @@ import logo from '../assets/shuttleplay_main_logo.png';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/main';
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +17,7 @@ function LoginPage() {
   const { isAuthenticated } = useSelector(state => state.auth);
 
   if (isAuthenticated) {
-    return <Navigate to="/main" replace/>;
+    return <Navigate to={from} replace />;
   }
 
   const handleLogin = async (e) => {
@@ -32,11 +34,11 @@ function LoginPage() {
       });
 
       // 상태 저장
-      dispatch(loginSuccess(response.data));
-      localStorage.setItem('user', JSON.stringify(response.data));
+      dispatch(loginSuccess({ userId: response.data.userId }));
+      localStorage.setItem('user', JSON.stringify({ userId: response.data.userId }));
 
-      // 페이지 이동
-      navigate('/main');
+      // 이전 페이지로 이동
+      navigate(from, { replace: true });
     } catch (error) {
       setErrorMessage(error.response?.data?.error || '로그인에 실패했습니다.');
     }
