@@ -140,7 +140,9 @@ function CurrentMatching() {
                     <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
                   </div>
                   <div className="cml-room-actions">
-                    <button className="cml-join-btn">방 참가</button>
+                    <button className="cml-join-btn" onClick={() => {navigate(`/current-matching/gameroom/${room.gameRoomId}`)}}>
+                      방 참가
+                    </button>
                   </div>
                 </div>
               ))}
