@@ -140,7 +140,27 @@ function CurrentMatching() {
                     <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
                   </div>
                   <div className="cml-room-actions">
-                    <button className="cml-join-btn" onClick={() => {navigate(`/current-matching/gameroom/${room.gameRoomId}`)}}>
+                    <button
+                      className="cml-join-btn"
+                      onClick={async () => {
+                        try {
+                          const res = await axios.post(
+                            `/api/rooms/${room.gameRoomId}/join`,
+                            { userId: user?.userId },
+                            { withCredentials: true }
+                          );
+
+                          if (res.data.status === 200) {
+                            alert('참가 요청 성공!');
+                            navigate(`/current-matching/gameroom/${room.gameRoomId}`);
+                          } else {
+                            alert(res.data.message || '참가 요청 실패');
+                          }
+                        } catch (err) {
+                          alert('참가 요청 중 오류가 발생했습니다.');
+                          console.error(err);
+                        }
+                      }}>
                       방 참가
                     </button>
                   </div>
