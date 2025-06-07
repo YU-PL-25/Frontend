@@ -22,7 +22,10 @@ document.title = "셔틀플레이 | " + details[idx];
 
 const savedUser = localStorage.getItem('user');
 if (savedUser) {
-  store.dispatch(loginSuccess(JSON.parse(savedUser)));
+  const parsed = JSON.parse(savedUser);
+  if (parsed.userId) {
+    store.dispatch(loginSuccess({ userId: parsed.userId }));
+  }
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
