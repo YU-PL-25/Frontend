@@ -50,6 +50,7 @@
   max-width: 1200px;
   margin: 32px auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 .grd-room-info-section, .grd-teams-section, .grd-actions-section {
@@ -216,11 +217,6 @@
   transition: all 0.2s ease;
 }
 
-/*.grd-ready-button {
-  background: #22c55e;
-  color: white;
-}*/
-
 .grd-start-button {
   background: #16a34a;
   color: white;
@@ -256,3 +252,16 @@
   background: #dc2626; /* 더 진한 빨강 */
 }
 
+.grd-gameroom-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.grd-body-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}

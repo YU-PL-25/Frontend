@@ -16,7 +16,6 @@
   margin-top: 40px; /* 원하는 만큼 띄우기 */
 }
 
-
 /* 선택 모드 카드 */
 .pre-select-mode-card {
   max-width: 800px;
@@ -38,8 +37,6 @@
   margin: 34px auto 0;   /* margin-top: 24px만! */
   display: block;
 }
-
-
 
 .pre-card-content {
   padding: 64px 20px;
@@ -78,11 +75,6 @@
 }
 .pre-select-mode-btn:hover {
   background: #941094;
-}
-
-/* (혹시 다른 버튼 디자인이 섞이지 않게 기존 코드도 유지) */
-.select-mode-buttons button {
-  /* 여기에 아무것도 안적혀있어도 되고, 기존에 남겨놔도 됨 */
 }
 
 /* 필터 바 */
@@ -176,7 +168,6 @@
   width: 100%;
   padding: 0 16px;                      /* 양옆 살짝 여유 */
 }
-
 
 .pre-card {
   background-color: #fff;
@@ -441,17 +432,21 @@
   position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.2); z-index: 99; display: flex; align-items: center; justify-content: center;
 }
+
 .pre-modal {
   background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.13); padding: 32px 24px; min-width: 340px;
   max-width: 90vw;
 }
+
 .pre-modal-form input, .pre-modal-form select {
   width: 100%; margin: 7px 0; padding: 10px; border-radius: 7px; border: 1px solid #ddd;
 }
+
 .pre-modal-create-btn, .pre-modal-cancel-btn {
   width: 100%; margin: 13px 0 5px 0; padding: 12px 0; border-radius: 7px; border: none;
   background: #af1aaa; color: #fff; font-weight: bold; font-size: 17px;
 }
+
 .pre-modal-cancel-btn {
   background: #e0e0e0;
 }
@@ -467,6 +462,7 @@
   box-sizing: border-box;
   transition: all 0.2s;
 }
+
 .pre-modal-mode-btn {
   flex: 1 1 0;
   padding: 12px 0;
@@ -479,8 +475,21 @@
   cursor: pointer;
   transition: 0.18s;
 }
+
 .pre-modal-mode-btn.selected {
   background: #af1aaa;
   color: #fff;
   box-shadow: 0 2px 8px rgba(174,56,215,0.10);
+}
+
+.pre-body-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pre-body-center .pre-select-mode-card {
+  margin: 0 auto;
 }

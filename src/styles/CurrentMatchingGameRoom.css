@@ -16,8 +16,8 @@ html, body, #root, .cm-current-matching-wrapper {
   padding: 40px 60px;
   font-family: 'Wanted Sans Variable', sans-serif;
   background-color: #fff;
+  width: 100%;
 }
-
 
 /* ▼ 기본 배경 및 컨테이너 */
 .cm-court-matching-wrap {
@@ -81,11 +81,31 @@ html, body, #root, .cm-current-matching-wrapper {
   vertical-align: middle;
 }
 
-.cm-badge-black { background: #222; color: #fff; }
-.cm-badge-gray { background: #ececec; color: #555; border: 1px solid #e5e7eb; }
-.cm-badge-green { background: #defad0; color: #137333; }
-.cm-badge-yellow { background: #fffbcf; color: #b59b00; }
-.cm-badge-red { background: #ffe1e1; color: #b30000; }
+.cm-badge-black { 
+  background: #222; 
+  color: #fff; 
+}
+
+.cm-badge-gray { 
+  background: #ececec; 
+  color: #555; 
+  border: 1px solid #e5e7eb; 
+}
+
+.cm-badge-green { 
+  background: #defad0; 
+  color: #137333; 
+}
+
+.cm-badge-yellow { 
+  background: #fffbcf; 
+  color: #b59b00; 
+}
+
+.cm-badge-red { 
+  background: #ffe1e1; 
+  color: #b30000; 
+}
 
 .cm-sub-address {
   color: #444;
@@ -130,7 +150,6 @@ html, body, #root, .cm-current-matching-wrapper {
   gap: 7px;
 }
 
-/* ▼▼▼ 추가/수정된 부분 ▼▼▼ */
 .cm-create-btn,
 .cm-manual-btn {
   margin-left: auto;
@@ -149,7 +168,6 @@ html, body, #root, .cm-current-matching-wrapper {
   background: #8e158a !important;
   color: #fff !important;
 }
-/* ▲▲▲ 여기까지 ▲▲▲ */
 
 .cm-panel-desc {
   font-size: 13px;
@@ -413,19 +431,58 @@ html, body, #root, .cm-current-matching-wrapper {
 }
 
 @media (max-width: 650px) {
-  .cm-modal-content { width: 97vw; min-width: 0; padding: 18px 7vw; }
-  .cm-modal-teams { flex-direction: column; gap: 11px; }
-  .cm-modal-team { min-width: 0; }
+  .cm-modal-content { 
+    width: 97vw; 
+    min-width: 0; 
+    padding: 18px 7vw; 
+  }
+
+  .cm-modal-teams { 
+    flex-direction: column; 
+    gap: 11px; 
+  }
+
+  .cm-modal-team { 
+    min-width: 0; 
+  }
 }
 
 /* ------- Rank(급수)별 배지 컬러 ------- */
-.cm-badge-purple { background: #ede6ff; color: #6835c2; }   /* SS */
-.cm-badge-red    { background: #ffe1e1; color: #b30000; }   /* S */
-.cm-badge-orange { background: #fff0d5; color: #e87e11; }   /* A */
-.cm-badge-yellow { background: #fffbcf; color: #b59b00; }   /* B */
-.cm-badge-green  { background: #defad0; color: #137333; }   /* C */
-.cm-badge-blue   { background: #e3f1ff; color: #2776c5; }   /* D */
-.cm-badge-gray   { background: #ececec; color: #555; border: 1px solid #e5e7eb; }  /* E, default */
+.cm-badge-purple { 
+  background: #ede6ff; 
+  color: #6835c2; 
+}   /* SS */
+
+.cm-badge-red { 
+  background: #ffe1e1; 
+  color: #b30000; 
+}   /* S */
+
+.cm-badge-orange { 
+  background: #fff0d5; 
+  color: #e87e11; 
+}   /* A */
+
+.cm-badge-yellow { 
+  background: #fffbcf; 
+  color: #b59b00; 
+}   /* B */
+
+.cm-badge-green { 
+  background: #defad0; 
+  color: #137333; 
+}   /* C */
+
+.cm-badge-blue { 
+  background: #e3f1ff; 
+  color: #2776c5; 
+}   /* D */
+
+.cm-badge-gray { 
+  background: #ececec; 
+  color: #555; 
+  border: 1px solid #e5e7eb; 
+}  /* E, default */
 
 /* 기존 배지 스타일 유지 */
 .cm-badge {
@@ -438,3 +495,16 @@ html, body, #root, .cm-current-matching-wrapper {
   vertical-align: middle;
 }
 
+.cm-body-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.cm-body-center .cm-current-matching-content { 
+  flex: 0;
+  padding-top: 0; 
+  background: transparent;
+}
