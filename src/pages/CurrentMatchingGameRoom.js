@@ -194,7 +194,7 @@ export default function CurrentMatchingGameRoom() {
         setCourtAddr('');
         setGameRooms([]);
       });
-  }, [roomId]);
+  }, [roomId, currentUserId]);
 
   // 방장만 내보내기
   const handleRemovePlayer = (roomId, playerId) => {
