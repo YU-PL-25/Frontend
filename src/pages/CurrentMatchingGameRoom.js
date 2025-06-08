@@ -252,14 +252,25 @@ export default function CurrentMatchingGameRoom() {
   
   const handleAutoRegister = () => setModalTypeOpen(true);
 
-  const handleAddWaitlistByType = (gameType) => {
-    const name = autoNames[Math.floor(Math.random() * autoNames.length)];
-    const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
-    setAutoWaitlist(prev => [
-      ...prev,
-      { id: `${Date.now()}`, name, rankLevel, gameType, type: "auto" }
-    ]);
-    setModalTypeOpen(false);
+  const handleAddWaitlistByType = async (gameType) => {
+    const requiredMatchCount = gameType === 'Singles' ? 2 : 4;
+
+    try {
+      await axios.post(
+        `/api/match/auto/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
+        { requiredMatchCount },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
+      setModalTypeOpen(false);
+    } catch (error) {
+      console.error('자동 매칭 등록 실패', error);
+      alert('자동 매칭 등록 중 오류가 발생했습니다.');
+    }
   };
 
   // 수동 매칭(체크박스 선택): 2명=단식, 4명=복식
