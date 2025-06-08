@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
@@ -155,6 +155,23 @@ export default function CurrentMatchingGameRoom() {
     localStorage.getItem('user') || '{}'
   );
   const [isAdmin, setIsAdmin] = useState(false);
+  const fetchManualWaitlist = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/match/manual/queue-users?roomId=${roomId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const queued = res.data?.queuedUsers || [];
+      const formatted = queued.map(user => ({
+        id: user.userId,
+        name: user.nickname,
+        rankLevel: user.rank,
+        type: 'manual'
+      }));
+      setManualWaitlist(formatted);
+    } catch (err) {
+      console.error('수동 대기자 목록 조회 실패', err);
+    }
+  }, [roomId]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -177,7 +194,6 @@ export default function CurrentMatchingGameRoom() {
           setCourtName(room.location?.courtName || room.courtName || '');
           setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
           setGameRooms(room.games ?? []);
-          console.log('ROOM INFO', room);
           setIsAdmin(Number(room.createdBy?.userId) === Number(currentUserId));
         } else {
           setHeaderTitle('');
@@ -195,24 +211,8 @@ export default function CurrentMatchingGameRoom() {
         setGameRooms([]);
       });
 
-    axios
-      .get(`/api/match/manual/queue-users?roomId=${roomId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(res => {
-        const queued = res.data?.queuedUsers || [];
-        const formatted = queued.map(user => ({
-          id: user.userId,
-          name: user.nickname, // api에서 nickname 대신 name 을 반환하는거로 변경하는건 어떤지 조율 필요
-          rankLevel: user.rank,
-          type: 'manual'
-        }));
-        setManualWaitlist(formatted);
-      })
-      .catch(err => {
-        console.error('수동 대기자 목록 조회 실패', err);
-      });
-  }, [roomId, currentUserId]);
+    fetchManualWaitlist();
+  }, [roomId, currentUserId, fetchManualWaitlist]);
 
   // 방장만 내보내기
   const handleRemovePlayer = (roomId, playerId) => {
@@ -243,12 +243,13 @@ export default function CurrentMatchingGameRoom() {
         { headers: { 'Content-Type': 'application/json' } }
       );
       alert('수동 매칭 큐에 등록되었습니다.');
+      await fetchManualWaitlist();
     } catch (error) {
-      console.error('수동 등록 실패', error);
-      alert('수동 등록 실패');
+      console.error('수동 등록 또는 대기자 목록 조회 실패', error);
+      alert('수동 등록 또는 목록 갱신 중 오류가 발생했습니다.');
     }
   };
-
+  
   const handleAutoRegister = () => setModalTypeOpen(true);
 
   const handleAddWaitlistByType = (gameType) => {
