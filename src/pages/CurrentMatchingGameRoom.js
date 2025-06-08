@@ -491,7 +491,7 @@ export default function CurrentMatchingGameRoom() {
                             borderRadius: 6
                           }}
                         >
-                          취소
+                          선택 취소
                         </Button>
                       </>
                     )}
