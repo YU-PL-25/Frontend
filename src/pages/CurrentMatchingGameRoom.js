@@ -297,203 +297,205 @@ export default function CurrentMatchingGameRoom() {
   return (
     <div className="cm-current-matching-wrapper">
       <Header />
-      <div className="cm-current-matching-content">
-        <div className="cm-court-matching-wrap">
-          {/* 상단 정보 카드 */}
-          <div className="cm-info-card">
-            <div className="cm-info-row">
-              <div>
-                <div className="cm-main-title">현장 매칭 모드</div>
-                <div className="cm-info-desc">현재 위치에서 게임방을 생성하거나 참가하세요</div>
+      <div className="cm-body-center">
+        <div className="cm-current-matching-content">
+          <div className="cm-court-matching-wrap">
+            {/* 상단 정보 카드 */}
+            <div className="cm-info-card">
+              <div className="cm-info-row">
+                <div>
+                  <div className="cm-main-title">현장 매칭 모드</div>
+                  <div className="cm-info-desc">현재 위치에서 게임방을 생성하거나 참가하세요</div>
+                </div>
+                <div className="cm-clock-box">
+                  <Clock style={{ width: 18, height: 18, marginRight: 4 }} />
+                  {currentTime.toLocaleTimeString()}
+                </div>
               </div>
-              <div className="cm-clock-box">
-                <Clock style={{ width: 18, height: 18, marginRight: 4 }} />
-                {currentTime.toLocaleTimeString()}
+              <div className="cm-sub-row">
+                <MapPin style={{ width: 16, height: 16, marginRight: 4 }} />
+                <span className="cm-court-name">영남대학교 체육관</span>
+                <Badge color="cm-black">매칭 가능</Badge>
+              </div>
+              <div className="cm-sub-address">123 River St, Downtown</div>
+              <div className="cm-checkbox-row">
+                <input
+                  type="checkbox"
+                  checked
+                  disabled
+                  id="auto-match"
+                />
+                <label htmlFor="auto-match" className="cm-auto-label">
+                  자동 게임 생성 활성화
+                </label>
               </div>
             </div>
-            <div className="cm-sub-row">
-              <MapPin style={{ width: 16, height: 16, marginRight: 4 }} />
-              <span className="cm-court-name">영남대학교 체육관</span>
-              <Badge color="cm-black">매칭 가능</Badge>
-            </div>
-            <div className="cm-sub-address">123 River St, Downtown</div>
-            <div className="cm-checkbox-row">
-              <input
-                type="checkbox"
-                checked
-                disabled
-                id="auto-match"
-              />
-              <label htmlFor="auto-match" className="cm-auto-label">
-                자동 게임 생성 활성화
-              </label>
-            </div>
-          </div>
 
-          {/* 좌우 패널 */}
-          <div className="cm-main-panel-grid">
-            {/* 왼쪽: 게임방 목록 */}
-            <div className="cm-game-rooms-card">
-              <div className="cm-panel-header">
-                <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                <span>진행 중인 게임</span>
-                <Badge color="gray">{gameRooms.length}</Badge>
-                <Button className="cm-create-btn" onClick={handleCreateRoom}>
-                  <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
-                  게임방 생성
-                </Button>
-              </div>
-              <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
-              {gameRooms.map(room => (
-                <div key={room.id} className="cm-game-room-box">
-                  <div className="cm-room-header-row">
-                    <div>
-                      <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
-                      <Badge color={room.status === "Ready" ? "black" : "gray"}>
-                        {room.status === "Ready" ? "매칭 완료" : "대기 중"}
-                      </Badge>
+            {/* 좌우 패널 */}
+            <div className="cm-main-panel-grid">
+              {/* 왼쪽: 게임방 목록 */}
+              <div className="cm-game-rooms-card">
+                <div className="cm-panel-header">
+                  <Users style={{ width: 18, height: 18, marginRight: 5 }} />
+                  <span>진행 중인 게임</span>
+                  <Badge color="gray">{gameRooms.length}</Badge>
+                  <Button className="cm-create-btn" onClick={handleCreateRoom}>
+                    <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
+                    게임방 생성
+                  </Button>
+                </div>
+                <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
+                {gameRooms.map(room => (
+                  <div key={room.id} className="cm-game-room-box">
+                    <div className="cm-room-header-row">
+                      <div>
+                        <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
+                        <Badge color={room.status === "Ready" ? "black" : "gray"}>
+                          {room.status === "Ready" ? "매칭 완료" : "대기 중"}
+                        </Badge>
+                      </div>
+                      <span className="cm-room-player-count">
+                        {room.players.length}/{room.maxPlayers} 명
+                      </span>
                     </div>
-                    <span className="cm-room-player-count">
-                      {room.players.length}/{room.maxPlayers} 명
-                    </span>
+                    <div className="cm-players-list">
+                      {room.players.map(player => (
+                        <div key={player.id} className="cm-player-row">
+                          <div className="cm-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                          <span className="cm-player-name">{player.name}</span>
+                          <Badge color={rankColor[player.rankLevel]}>
+                            {player.rankLevel}
+                          </Badge>
+                          {room.isMine && (
+                            <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
+                              내보내기
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      <Button className="cm-join-btn"
+                        onClick={() => {
+                          setModalRoom(room);
+                          setModalOpen(true);
+                        }}>
+                        <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
+                        조회
+                      </Button>
+                    </div>
+                    <div className="cm-room-created-at">
+                      {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
+                    </div>
                   </div>
-                  <div className="cm-players-list">
-                    {room.players.map(player => (
-                      <div key={player.id} className="cm-player-row">
-                        <div className="cm-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                        <span className="cm-player-name">{player.name}</span>
+                ))}
+              </div>
+
+              {/* 오른쪽: 대기자 명단 */}
+              <div className="cm-waitlist-card">
+                {/* 수동 대기자 명단(위) */}
+                <div>
+                  <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
+                    <Users style={{ width: 18, height: 18, marginRight: 5 }} />
+                    <span>수동 대기자 명단</span>
+                    <Badge color="gray">{manualWaitlist.length}</Badge>
+                    <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
+                      <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
+                    </div>
+                  </div>
+                  <div className="cm-panel-desc">체크 후 선택 인원(2명=단식, 4명=복식)으로 방을 직접 만들 수 있습니다</div>
+                  <div className="cm-waitlist-list">
+                    {manualWaitlist.map(player => (
+                      <div className="cm-waitlist-row" key={player.id}>
+                        <input
+                          type="checkbox"
+                          checked={selected.includes(player.id)}
+                          onChange={() =>
+                            setSelected(selected.includes(player.id)
+                              ? selected.filter(id => id !== player.id)
+                              : [...selected, player.id])
+                          }
+                          style={{ marginRight: 8 }}
+                        />
+                        <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                        <span className="cm-wait-name">{player.name}</span>
                         <Badge color={rankColor[player.rankLevel]}>
                           {player.rankLevel}
                         </Badge>
-                        {room.isMine && (
-                          <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
-                            내보내기
-                          </Button>
-                        )}
                       </div>
                     ))}
-                    <Button className="cm-join-btn"
-                      onClick={() => {
-                        setModalRoom(room);
-                        setModalOpen(true);
-                      }}>
-                      <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
-                      조회
-                    </Button>
                   </div>
-                  <div className="cm-room-created-at">
-                    {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 오른쪽: 대기자 명단 */}
-            <div className="cm-waitlist-card">
-              {/* 수동 대기자 명단(위) */}
-              <div>
-                <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
-                  <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                  <span>수동 대기자 명단</span>
-                  <Badge color="gray">{manualWaitlist.length}</Badge>
-                  <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                    <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
+                  <div style={{ marginTop: 14 }}>
+                    <Button
+                      onClick={handleManualMatchCreate}
+                      disabled={selected.length !== 2 && selected.length !== 4}
+                      style={{
+                        marginRight: 8, background: '#e8e3fd', color: '#6930c3', borderRadius: 6
+                      }}
+                    >게임 매칭</Button>
+                    <Button
+                      onClick={handleManualMatchCancel}
+                      style={{
+                        background: '#ececec', color: '#555', borderRadius: 6
+                      }}
+                    >취소</Button>
                   </div>
                 </div>
-                <div className="cm-panel-desc">체크 후 선택 인원(2명=단식, 4명=복식)으로 방을 직접 만들 수 있습니다</div>
-                <div className="cm-waitlist-list">
-                  {manualWaitlist.map(player => (
-                    <div className="cm-waitlist-row" key={player.id}>
-                      <input
-                        type="checkbox"
-                        checked={selected.includes(player.id)}
-                        onChange={() =>
-                          setSelected(selected.includes(player.id)
-                            ? selected.filter(id => id !== player.id)
-                            : [...selected, player.id])
-                        }
-                        style={{ marginRight: 8 }}
-                      />
-                      <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                      <span className="cm-wait-name">{player.name}</span>
-                      <Badge color={rankColor[player.rankLevel]}>
-                        {player.rankLevel}
-                      </Badge>
+                <hr style={{ margin: "28px 0" }} />
+                {/* 자동 대기자 명단(아래) */}
+                <div>
+                  <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
+                    <Users style={{ width: 18, height: 18, marginRight: 5 }} />
+                    <span>자동 대기자 명단</span>
+                    <Badge color="gray">{autoWaitlist.length}</Badge>
+                    <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
+                      <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
                     </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: 14 }}>
-                  <Button
-                    onClick={handleManualMatchCreate}
-                    disabled={selected.length !== 2 && selected.length !== 4}
-                    style={{
-                      marginRight: 8, background: '#e8e3fd', color: '#6930c3', borderRadius: 6
-                    }}
-                  >게임 매칭</Button>
-                  <Button
-                    onClick={handleManualMatchCancel}
-                    style={{
-                      background: '#ececec', color: '#555', borderRadius: 6
-                    }}
-                  >취소</Button>
-                </div>
-              </div>
-              <hr style={{ margin: "28px 0" }} />
-              {/* 자동 대기자 명단(아래) */}
-              <div>
-                <div className="cm-panel-header" style={{ alignItems: "center", gap: 12 }}>
-                  <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                  <span>자동 대기자 명단</span>
-                  <Badge color="gray">{autoWaitlist.length}</Badge>
-                  <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                    <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
+                  </div>
+                  <div className="cm-panel-desc">아래 명단은 자동으로 방이 생성됩니다</div>
+                  <div className="cm-waitlist-list">
+                    {autoWaitlist.map(player => (
+                      <div className="cm-waitlist-row" key={player.id}>
+                        <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
+                        <span className="cm-wait-name">{player.name}</span>
+                        <Badge color={rankColor[player.rankLevel]}>
+                          {player.rankLevel}
+                        </Badge>
+                        <span style={{ marginLeft: 8, fontSize: 13, color: "#333" }}>
+                          {gameTypeLabel[player.gameType]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{
+                    marginTop: 14, display: "flex", justifyContent: "center"
+                  }}>
+                    <button
+                      className="cm-create-btn"
+                      onClick={handleStartAutoMatch}
+                    >
+                      자동 매칭 시작
+                    </button>
                   </div>
                 </div>
-                <div className="cm-panel-desc">아래 명단은 자동으로 방이 생성됩니다</div>
-                <div className="cm-waitlist-list">
-                  {autoWaitlist.map(player => (
-                    <div className="cm-waitlist-row" key={player.id}>
-                      <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
-                      <span className="cm-wait-name">{player.name}</span>
-                      <Badge color={rankColor[player.rankLevel]}>
-                        {player.rankLevel}
-                      </Badge>
-                      <span style={{ marginLeft: 8, fontSize: 13, color: "#333" }}>
-                        {gameTypeLabel[player.gameType]}
-                      </span>
-                    </div>
-                  ))}
+                <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
+                  <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
                 </div>
-                <div style={{
-                  marginTop: 14, display: "flex", justifyContent: "center"
-                }}>
-                  <button
-                    className="cm-create-btn"
-                    onClick={handleStartAutoMatch}
-                  >
-                    자동 매칭 시작
-                  </button>
-                </div>
-              </div>
-              <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
-                <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
               </div>
             </div>
           </div>
         </div>
+        {/* ======== 모달들 ======== */}
+        <SelectTypeModal
+          open={modalTypeOpen}
+          onClose={() => setModalTypeOpen(false)}
+          onSelect={handleAddWaitlistByType}
+        />
+        <GameResultModal
+          visible={modalOpen}
+          room={modalRoom}
+          onClose={() => setModalOpen(false)}
+          onFinishGame={handleFinishGame}
+        />
       </div>
-      {/* ======== 모달들 ======== */}
-      <SelectTypeModal
-        open={modalTypeOpen}
-        onClose={() => setModalTypeOpen(false)}
-        onSelect={handleAddWaitlistByType}
-      />
-      <GameResultModal
-        visible={modalOpen}
-        room={modalRoom}
-        onClose={() => setModalOpen(false)}
-        onFinishGame={handleFinishGame}
-      />
       <Footer />
     </div>
   );
