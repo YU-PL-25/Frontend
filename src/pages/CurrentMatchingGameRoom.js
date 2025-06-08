@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
 import { MapPin, Clock, Users, UserPlus, Plus, X } from "lucide-react";
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
@@ -138,6 +139,7 @@ const GameResultModal = ({
 
 // ======= 본문 =======
 export default function CurrentMatchingGameRoom() {
+  const { id: roomId } = useParams();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [headerTitle, setHeaderTitle] = useState('');
   const [courtName, setCourtName]   = useState('');
@@ -181,25 +183,33 @@ export default function CurrentMatchingGameRoom() {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/game-room')
+    if (!roomId) return;
+
+    axios
+      .get('/api/game-room')
       .then(res => {
         const rooms = res.data?.data || res.data;
-        if (Array.isArray(rooms) && rooms.length > 0) {
-          const first = rooms[0];
-          setHeaderTitle(first.title || '');
-          if (first.location) {
-            setCourtName(first.location.courtName || '');
-            setCourtAddr(first.location.courtAddress || '');
-          } else {
-            setCourtName(first.courtName || '');
-            setCourtAddr(first.courtAddress || '');
-          }
+        const room  = rooms.find(r =>
+          String(r.gameRoomId ?? r.id) === String(roomId)
+        );
+
+        if (room) {
+          setHeaderTitle(room.title || '');
+          setCourtName(room.location?.courtName || room.courtName || '');
+          setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
+        } else {
+          setHeaderTitle('');
+          setCourtName('');
+          setCourtAddr('');
         }
       })
       .catch(err => {
-        console.error('HEADER INFO LOAD ERROR', err);
+        console.error('ROOM INFO LOAD ERROR', err);
+        setHeaderTitle('');
+        setCourtName('');
+        setCourtAddr('');
       });
-  }, []);
+  }, [roomId]);
 
   // 방장만 내보내기
   const handleRemovePlayer = (roomId, playerId) => {
