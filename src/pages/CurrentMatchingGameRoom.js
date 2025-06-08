@@ -144,34 +144,9 @@ export default function CurrentMatchingGameRoom() {
   const [headerTitle, setHeaderTitle] = useState('');
   const [courtName, setCourtName]   = useState('');
   const [courtAddr, setCourtAddr]   = useState(''); 
-  const [gameRooms, setGameRooms] = useState([
-    {
-      id: "room1",
-      courtName: "영남대학교 체육관",
-      gameType: "Doubles",
-      players: [
-        { id: "p1", name: "홍길동", rankLevel: "S", type: "manual" },
-        { id: "p2", name: "김철수", rankLevel: "A", type: "manual" },
-        { id: "p3", name: "박영희", rankLevel: "C", type: "manual" },
-        { id: "p4", name: "정철민", rankLevel: "B", type: "manual" }
-      ],
-      maxPlayers: 4,
-      status: "Waiting",
-      createdBy: "홍길동",
-      createdAt: new Date(Date.now() - 300000),
-      isMine: true
-    },
-  ]);
-  const [manualWaitlist, setManualWaitlist] = useState([
-    { id: "6", name: "이미경", rankLevel: "B", type: "manual" },
-    { id: "7", name: "이현우", rankLevel: "A", type: "manual" }
-  ]);
-  const [autoWaitlist, setAutoWaitlist] = useState([
-    { id: "8", name: "조유정", rankLevel: "SS", gameType: "Singles", type: "auto" },
-    { id: "9", name: "정지훈", rankLevel: "C", gameType: "Doubles", type: "auto" },
-    { id: "10", name: "황유림", rankLevel: "D", gameType: "Doubles", type: "auto" },
-    { id: "11", name: "최은지", rankLevel: "E", gameType: "Singles", type: "auto" }
-  ]);
+  const [gameRooms, setGameRooms] = useState([]);
+  const [manualWaitlist, setManualWaitlist] = useState([]);
+  const [autoWaitlist, setAutoWaitlist] = useState([]);
   const [selected, setSelected] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
@@ -197,10 +172,12 @@ export default function CurrentMatchingGameRoom() {
           setHeaderTitle(room.title || '');
           setCourtName(room.location?.courtName || room.courtName || '');
           setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
+          setGameRooms(room.games ?? []);
         } else {
           setHeaderTitle('');
           setCourtName('');
           setCourtAddr('');
+          setGameRooms([]);
         }
       })
       .catch(err => {
@@ -208,6 +185,7 @@ export default function CurrentMatchingGameRoom() {
         setHeaderTitle('');
         setCourtName('');
         setCourtAddr('');
+        setGameRooms([]);
       });
   }, [roomId]);
 
