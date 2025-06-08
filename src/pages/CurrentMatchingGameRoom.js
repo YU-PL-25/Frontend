@@ -151,6 +151,10 @@ export default function CurrentMatchingGameRoom() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
+  const { userId: currentUserId } = JSON.parse(
+    localStorage.getItem('user') || '{}'
+  );
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -173,11 +177,14 @@ export default function CurrentMatchingGameRoom() {
           setCourtName(room.location?.courtName || room.courtName || '');
           setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
           setGameRooms(room.games ?? []);
+          console.log('ROOM INFO', room);
+          setIsAdmin(Number(room.createdBy?.userId) === Number(currentUserId));
         } else {
           setHeaderTitle('');
           setCourtName('');
           setCourtAddr('');
           setGameRooms([]);
+          setIsAdmin(false);
         }
       })
       .catch(err => {
@@ -351,10 +358,12 @@ export default function CurrentMatchingGameRoom() {
                   <Users style={{ width: 18, height: 18, marginRight: 5 }} />
                   <span>진행 중인 게임</span>
                   <Badge color="gray">{gameRooms.length}</Badge>
-                  <Button className="cm-create-btn" onClick={handleCreateRoom}>
-                    <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
-                    게임방 생성
-                  </Button>
+                  {isAdmin && (
+                    <Button className="cm-create-btn" onClick={handleCreateRoom}>
+                      <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
+                      게임방 생성
+                    </Button>
+                  )}
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
                 {gameRooms.map(room => (
@@ -436,19 +445,32 @@ export default function CurrentMatchingGameRoom() {
                     ))}
                   </div>
                   <div style={{ marginTop: 14 }}>
-                    <Button
-                      onClick={handleManualMatchCreate}
-                      disabled={selected.length !== 2 && selected.length !== 4}
-                      style={{
-                        marginRight: 8, background: '#e8e3fd', color: '#6930c3', borderRadius: 6
-                      }}
-                    >게임 매칭</Button>
-                    <Button
-                      onClick={handleManualMatchCancel}
-                      style={{
-                        background: '#ececec', color: '#555', borderRadius: 6
-                      }}
-                    >취소</Button>
+                    {isAdmin && (
+                      <>
+                        <Button
+                          onClick={handleManualMatchCreate}
+                          disabled={selected.length !== 2 && selected.length !== 4}
+                          style={{
+                            marginRight: 8,
+                            background: '#e8e3fd',
+                            color: '#6930c3',
+                            borderRadius: 6
+                          }}
+                        >
+                          게임 매칭
+                        </Button>
+                        <Button
+                          onClick={handleManualMatchCancel}
+                          style={{
+                            background: '#ececec',
+                            color: '#555',
+                            borderRadius: 6
+                          }}
+                        >
+                          취소
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
                 <hr style={{ margin: "28px 0" }} />
@@ -480,17 +502,21 @@ export default function CurrentMatchingGameRoom() {
                   <div style={{
                     marginTop: 14, display: "flex", justifyContent: "center"
                   }}>
-                    <button
-                      className="cm-create-btn"
-                      onClick={handleStartAutoMatch}
-                    >
-                      자동 매칭 시작
-                    </button>
+                    {isAdmin && (
+                      <button
+                        className="cm-create-btn"
+                        onClick={handleStartAutoMatch}
+                      >
+                        자동 매칭 시작
+                      </button>
+                    )}
                   </div>
                 </div>
+                {isAdmin && (
                 <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
                   <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
                 </div>
+                )}
               </div>
             </div>
           </div>
