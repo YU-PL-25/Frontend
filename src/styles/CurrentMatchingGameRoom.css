@@ -450,5 +450,6 @@ html, body, #root, .cm-current-matching-wrapper {
 .cm-body-center .cm-current-matching-content { 
   flex: 0;
   padding-top: 0; 
+  background: transparent;
 }
 
