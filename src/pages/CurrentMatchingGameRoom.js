@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
 import { MapPin, Clock, Users, UserPlus, Plus, X } from "lucide-react";
+import axios from 'axios';
 
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
@@ -138,6 +139,9 @@ const GameResultModal = ({
 // ======= 본문 =======
 export default function CurrentMatchingGameRoom() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [headerTitle, setHeaderTitle] = useState('');
+  const [courtName, setCourtName]   = useState('');
+  const [courtAddr, setCourtAddr]   = useState(''); 
   const [gameRooms, setGameRooms] = useState([
     {
       id: "room1",
@@ -174,6 +178,27 @@ export default function CurrentMatchingGameRoom() {
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    axios.get('/api/game-room')
+      .then(res => {
+        const rooms = res.data?.data || res.data;
+        if (Array.isArray(rooms) && rooms.length > 0) {
+          const first = rooms[0];
+          setHeaderTitle(first.title || '');
+          if (first.location) {
+            setCourtName(first.location.courtName || '');
+            setCourtAddr(first.location.courtAddress || '');
+          } else {
+            setCourtName(first.courtName || '');
+            setCourtAddr(first.courtAddress || '');
+          }
+        }
+      })
+      .catch(err => {
+        console.error('HEADER INFO LOAD ERROR', err);
+      });
   }, []);
 
   // 방장만 내보내기
@@ -304,8 +329,7 @@ export default function CurrentMatchingGameRoom() {
             <div className="cm-info-card">
               <div className="cm-info-row">
                 <div>
-                  <div className="cm-main-title">현장 매칭 모드</div>
-                  <div className="cm-info-desc">현재 위치에서 게임방을 생성하거나 참가하세요</div>
+                  <div className="cm-main-title">{headerTitle}</div>
                 </div>
                 <div className="cm-clock-box">
                   <Clock style={{ width: 18, height: 18, marginRight: 4 }} />
@@ -314,10 +338,10 @@ export default function CurrentMatchingGameRoom() {
               </div>
               <div className="cm-sub-row">
                 <MapPin style={{ width: 16, height: 16, marginRight: 4 }} />
-                <span className="cm-court-name">영남대학교 체육관</span>
+                <span className="cm-court-name">{courtName}</span>
                 <Badge color="cm-black">매칭 가능</Badge>
               </div>
-              <div className="cm-sub-address">123 River St, Downtown</div>
+              <div className="cm-sub-address">{courtAddr}</div>
               <div className="cm-checkbox-row">
                 <input
                   type="checkbox"
