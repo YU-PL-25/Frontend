@@ -261,6 +261,7 @@ function PreMatching() {
     <div className="pre-matching-wrapper">
       <Header />
 
+      <div className="pre-body-center">
       <PreMatchingCreateRoomModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
@@ -380,6 +381,7 @@ function PreMatching() {
           )}
         </>
       )}
+      </div>
 
       <div style={{ marginTop: 'auto' }}>
         <Footer />
