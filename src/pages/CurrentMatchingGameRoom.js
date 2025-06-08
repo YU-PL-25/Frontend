@@ -194,6 +194,24 @@ export default function CurrentMatchingGameRoom() {
         setCourtAddr('');
         setGameRooms([]);
       });
+
+    axios
+      .get(`/api/match/manual/queue-users?roomId=${roomId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        const queued = res.data?.queuedUsers || [];
+        const formatted = queued.map(user => ({
+          id: user.userId,
+          name: user.nickname, // api에서 nickname 대신 name 을 반환하는거로 변경하는건 어떤지 조율 필요
+          rankLevel: user.rank,
+          type: 'manual'
+        }));
+        setManualWaitlist(formatted);
+      })
+      .catch(err => {
+        console.error('수동 대기자 목록 조회 실패', err);
+      });
   }, [roomId, currentUserId]);
 
   // 방장만 내보내기
@@ -217,13 +235,18 @@ export default function CurrentMatchingGameRoom() {
     );
   };
 
-  const handleManualRegister = () => {
-    const name = autoNames[Math.floor(Math.random() * autoNames.length)];
-    const rankLevel = rankLevels[Math.floor(Math.random() * rankLevels.length)];
-    setManualWaitlist(prev => [
-      ...prev,
-      { id: `${Date.now()}`, name, rankLevel, type: "manual" }
-    ]);
+  const handleManualRegister = async () => {
+    try {
+      await axios.post(
+        `/api/match/manual/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
+        {},
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      alert('수동 매칭 큐에 등록되었습니다.');
+    } catch (error) {
+      console.error('수동 등록 실패', error);
+      alert('수동 등록 실패');
+    }
   };
 
   const handleAutoRegister = () => setModalTypeOpen(true);
