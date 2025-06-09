@@ -111,13 +111,14 @@ html, body, #root, .cm-current-matching-wrapper {
   color: #444;
   font-size: 14px;
   margin-bottom: 4px;
+  margin-left: calc(20px + 8px);
 }
 
 .cm-checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 7px;
+  margin-top: 18px;
   font-size: 15px;
   font-weight: 500;
 }
