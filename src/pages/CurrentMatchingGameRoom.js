@@ -386,11 +386,6 @@ export default function CurrentMatchingGameRoom() {
     ]);
   };
 
-  const handleCancelRegister = () => {
-    setManualWaitlist(prev => prev.length > 0 ? prev.slice(0, -1) : prev);
-    setAutoWaitlist(prev => prev.length > 0 ? prev.slice(0, -1) : prev);
-  };
-
   return (
     <div className="cm-current-matching-wrapper">
       <Header />
