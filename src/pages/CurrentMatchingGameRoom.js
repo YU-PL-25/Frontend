@@ -168,6 +168,25 @@ export default function CurrentMatchingGameRoom() {
     }
   }, [roomId]);
 
+  const fetchAutoWaitlist = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/match/auto/queue-users?roomId=${roomId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const queued = res.data?.queuedUsers || [];
+      const formatted = queued.map(user => ({
+        id: user.userId,
+        name: user.nickname,
+        rankLevel: user.rank,
+        gameType: Number(user.requiredMatchCount) === 2 ? 'Singles' : 'Doubles',
+        type: 'auto'
+      }));
+      setAutoWaitlist(formatted);
+    } catch (err) {
+      console.error('자동 대기자 목록 조회 실패', err);
+    }
+  }, [roomId]);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -207,7 +226,8 @@ export default function CurrentMatchingGameRoom() {
       });
 
     fetchManualWaitlist();
-  }, [roomId, currentUserId, fetchManualWaitlist]);
+    fetchAutoWaitlist();
+  }, [roomId, currentUserId, fetchManualWaitlist, fetchAutoWaitlist]);
 
   // 방장만 내보내기
   const handleRemovePlayer = (roomId, playerId) => {
@@ -262,6 +282,7 @@ export default function CurrentMatchingGameRoom() {
       );
       alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
       setModalTypeOpen(false);
+      fetchAutoWaitlist();
     } catch (error) {
       console.error('자동 매칭 등록 실패', error);
       alert('자동 매칭 등록 중 오류가 발생했습니다.');
@@ -302,6 +323,19 @@ export default function CurrentMatchingGameRoom() {
     } catch (error) {
       console.error('수동 매칭 등록 취소 실패', error);
       alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleCancelAutoRegister = async () => {
+    try {
+      await axios.delete(`/api/match/auto/queue?userId=${currentUserId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      alert('자동 매칭 등록이 취소되었습니다.');
+      fetchAutoWaitlist();
+    } catch (error) {
+      console.error('자동 매칭 등록 취소 실패', error);
+      alert('자동 매칭 등록 취소 중 오류가 발생했습니다.');
     }
   };
 
@@ -530,7 +564,7 @@ export default function CurrentMatchingGameRoom() {
                     <Badge color="gray">{autoWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
                       <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
+                      <Button className="cm-create-btn" onClick={handleCancelAutoRegister}>매칭 등록 취소</Button>
                     </div>
                   </div>
                   {isAdmin && (
@@ -544,9 +578,6 @@ export default function CurrentMatchingGameRoom() {
                         <Badge color={rankColor[player.rankLevel]}>
                           {player.rankLevel}
                         </Badge>
-                        <span style={{ marginLeft: 8, fontSize: 13, color: "#333" }}>
-                          {gameTypeLabel[player.gameType]}
-                        </span>
                       </div>
                     ))}
                   </div>
