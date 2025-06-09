@@ -472,16 +472,18 @@ export default function CurrentMatchingGameRoom() {
                   <div className="cm-waitlist-list">
                     {manualWaitlist.map(player => (
                       <div className="cm-waitlist-row" key={player.id}>
-                        <input
-                          type="checkbox"
-                          checked={selected.includes(player.id)}
-                          onChange={() =>
-                            setSelected(selected.includes(player.id)
-                              ? selected.filter(id => id !== player.id)
-                              : [...selected, player.id])
-                          }
-                          style={{ marginRight: 8 }}
-                        />
+                        {isAdmin && (
+                          <input
+                            type="checkbox"
+                            checked={selected.includes(player.id)}
+                            onChange={() =>
+                              setSelected(selected.includes(player.id)
+                                ? selected.filter(id => id !== player.id)
+                                : [...selected, player.id])
+                            }
+                            style={{ marginRight: 8 }}
+                          />
+                        )}
                         <div className="cm-wait-avatar">{player.name.split(" ").map(n => n[0]).join("")}</div>
                         <span className="cm-wait-name">{player.name}</span>
                         <Badge color={rankColor[player.rankLevel]}>
