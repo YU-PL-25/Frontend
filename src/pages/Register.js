@@ -37,7 +37,7 @@ function Register() {
     const { name, email, phone, password, nickname } = form;
     const nameReg  = /^[가-힣a-zA-Z]{2,}$/;
     const emailReg = /^[\w.+-]+@[a-z\d-]+(\.[a-z\d-]+)+$/i;
-    const phoneReg = /^01[016789]-\d{3,4}-\d{4}$/;
+    const phoneReg = /^01[016789]\d{7,8}$/;
     const passReg  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
     
     if (!name || !email || !phone || !password || !nickname) {
@@ -56,7 +56,7 @@ function Register() {
     }
 
     if (!phoneReg.test(phone)) {
-      setError('전화번호 형식이 010-1234-5678 이어야 합니다.');
+      setError('전화번호 형식이 01012345678 이어야 합니다.');
       return;
     }
 
@@ -107,7 +107,7 @@ function Register() {
             <input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="abcd@abcd.com" required/>
 
             <label htmlFor="phone">전화번호</label>
-            <input id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="010-1234-5678" required/>
+            <input id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="01012345678" required/>
 
             <label htmlFor="password">비밀번호</label>
             <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="8-20자, 대/소문자·숫자·특수문자 모두 포함" required/>
