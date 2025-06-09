@@ -4,14 +4,16 @@ import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
 import { MapPin, Clock, Users, UserPlus, X } from "lucide-react";
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
 );
+
 const Button = ({ children, className = "", ...props }) => (
   <button className={`cm-btn ${className}`} {...props}>{children}</button>
 );
+
 const rankColor = {
   SS: "purple",
   S: "red",
@@ -21,6 +23,7 @@ const rankColor = {
   D: "blue",
   E: "gray"
 };
+
 const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
 
 // 단식/복식 선택 모달 (자동 매칭 등록만)
@@ -47,7 +50,6 @@ const GameResultModal = ({
 }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
-
   const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
   const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
 
@@ -135,6 +137,7 @@ const GameResultModal = ({
 // ======= 본문 =======
 export default function CurrentMatchingGameRoom() {
   const { id: roomId } = useParams();
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [headerTitle, setHeaderTitle] = useState('');
   const [courtName, setCourtName]   = useState('');
@@ -149,6 +152,7 @@ export default function CurrentMatchingGameRoom() {
   const { userId: currentUserId } = JSON.parse(
     localStorage.getItem('user') || '{}'
   );
+
   const [isAdmin, setIsAdmin] = useState(false);
   const fetchManualWaitlist = useCallback(async () => {
     try {
@@ -576,12 +580,51 @@ export default function CurrentMatchingGameRoom() {
           onClose={() => setModalTypeOpen(false)}
           onSelect={handleAddWaitlistByType}
         />
+
         <GameResultModal
           visible={modalOpen}
           room={modalRoom}
           onClose={() => setModalOpen(false)}
           onFinishGame={handleFinishGame}
         />
+        
+        {isAdmin ? (
+          <div style={{ display: "flex", justifyContent: "center", margin: "3px 0" }}>
+            <Button
+              className="cm-delete-button"
+              onClick={async () => {
+                try {
+                  await axios.delete(`/api/game-room/${roomId}`);
+                  alert("게임방이 삭제되었습니다.");
+                  navigate("/current-matching");
+                } catch (error) {
+                  console.error("게임방 삭제 실패", error);
+                  alert("게임방 삭제 중 오류가 발생했습니다.");
+                }
+              }}
+            >
+              게임방 삭제
+            </Button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", justifyContent: "center", margin: "3px 0" }}>
+            <Button
+              className="cm-exit-button"
+              onClick={async () => {
+                try {
+                  await axios.delete(`/api/users/${currentUserId}/game-room`);
+                  alert("게임방에서 나갔습니다.");
+                  navigate("/current-matching");
+                } catch (error) {
+                  console.error("게임방 나가기 실패", error);
+                  alert("게임방 나가기 중 오류가 발생했습니다.");
+                }
+              }}
+            >
+              게임방 나가기
+            </Button>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

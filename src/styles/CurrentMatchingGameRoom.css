@@ -509,3 +509,33 @@ html, body, #root, .cm-current-matching-wrapper {
   padding-top: 0; 
   background: transparent;
 }
+
+.cm-delete-button {
+  background-color: #ff595e;
+  color: white;
+  padding: 10px 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cm-exit-button {
+  background-color: #ff595e;
+  color: white;
+  padding: 10px 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cm-delete-button:hover {
+  background-color: #ff4749;
+}
+
+.cm-exit-button:hover {
+  background-color: #ff4749;
+}
