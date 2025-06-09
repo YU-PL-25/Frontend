@@ -283,27 +283,28 @@ export default function CurrentMatchingGameRoom() {
   };
 
   // 수동 매칭(체크박스 선택): 2명=단식, 4명=복식
-  const handleManualMatchCreate = () => {
-    if (selected.length !== 2 && selected.length !== 4) return;
-    const gameType = selected.length === 2 ? "Singles" : "Doubles";
-    const players = manualWaitlist.filter(p => selected.includes(p.id));
-    const newPlayers = players.map(p => ({ ...p, gameType })); // 방 내에는 타입 부여
-    setGameRooms(prev => [
-      ...prev,
-      {
-        id: `manual-${Date.now()}`,
-        courtName: "영남대학교 체육관",
-        gameType,
-        players: newPlayers,
-        maxPlayers: gameType === "Singles" ? 2 : 4,
-        status: "Ready",
-        createdBy: "You",
-        createdAt: new Date(),
-        isMine: true
-      }
-    ]);
-    setManualWaitlist(prev => prev.filter(p => !selected.includes(p.id)));
-    setSelected([]);
+  const handleManualMatchCreate = async () => {
+    if (selected.length !== 2 && selected.length !== 4) {
+      alert("2명 또는 4명을 선택해야 매칭이 가능합니다.");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `/api/match/manual/games/${roomId}?requesterId=${currentUserId}`,
+        { userIds: selected },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+
+      alert("수동 매칭이 성공적으로 완료되었습니다.");
+      setSelected([]);
+      await fetchManualWaitlist();     
+    } catch (error) {
+      console.error("수동 매칭 실패", error);
+      alert("수동 매칭 중 오류가 발생했습니다.");
+    }
   };
 
   const handleCancelManualRegister = async () => {
