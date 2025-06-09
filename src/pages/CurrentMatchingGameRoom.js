@@ -582,6 +582,29 @@ export default function CurrentMatchingGameRoom() {
           onClose={() => setModalOpen(false)}
           onFinishGame={handleFinishGame}
         />
+        {isAdmin ? (
+          <div style={{ display: "flex", justifyContent: "center", margin: "3px 0" }}>
+            <Button
+              className="cm-delete-button"
+              onClick={() => {
+                alert("게임방 삭제 버튼 클릭됨");
+              }}
+            >
+              게임방 삭제
+            </Button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", justifyContent: "center", margin: "3px 0" }}>
+            <Button
+              className="cm-exit-button"
+              onClick={() => {
+                alert("게임방 나가기 버튼 클릭됨");
+              }}
+            >
+              게임방 나가기
+            </Button>
+          </div>
+        )}
       </div>
       <Footer />
     </div>
