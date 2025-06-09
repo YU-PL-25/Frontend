@@ -292,6 +292,19 @@ export default function CurrentMatchingGameRoom() {
     setSelected([]);
   };
 
+  const handleCancelManualRegister = async () => {
+    try {
+      await axios.delete(`/api/match/manual/queue?userId=${currentUserId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      alert('수동 매칭 등록이 취소되었습니다.');
+      await fetchManualWaitlist();
+    } catch (error) {
+      console.error('수동 매칭 등록 취소 실패', error);
+      alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
+    }
+  };
+
   const handleManualMatchCancel = () => setSelected([]);
 
   const handleStartAutoMatch = () => {
@@ -450,7 +463,7 @@ export default function CurrentMatchingGameRoom() {
                     <Badge color="gray">{manualWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
                       <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
+                      <Button className="cm-create-btn" onClick={handleCancelManualRegister}>매칭 등록 취소</Button>
                     </div>
                   </div>
                   {isAdmin && (
