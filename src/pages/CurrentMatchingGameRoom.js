@@ -450,9 +450,12 @@ export default function CurrentMatchingGameRoom() {
                     <Badge color="gray">{manualWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
                       <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
+                      <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
                     </div>
                   </div>
-                  <div className="cm-panel-desc">체크 후 선택 인원(2명=단식, 4명=복식)으로 방을 직접 만들 수 있습니다</div>
+                  {isAdmin && (
+                    <div className="cm-panel-desc">체크 후 선택 인원(2명=단식, 4명=복식)으로 방을 직접 만들 수 있습니다</div>
+                  )}
                   <div className="cm-waitlist-list">
                     {manualWaitlist.map(player => (
                       <div className="cm-waitlist-row" key={player.id}>
@@ -512,9 +515,12 @@ export default function CurrentMatchingGameRoom() {
                     <Badge color="gray">{autoWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
                       <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
+                      <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
                     </div>
                   </div>
-                  <div className="cm-panel-desc">아래 명단은 자동으로 방이 생성됩니다</div>
+                  {isAdmin && (
+                    <div className="cm-panel-desc">아래 명단은 자동으로 방이 생성됩니다</div>
+                  )}
                   <div className="cm-waitlist-list">
                     {autoWaitlist.map(player => (
                       <div className="cm-waitlist-row" key={player.id}>
@@ -542,11 +548,6 @@ export default function CurrentMatchingGameRoom() {
                     )}
                   </div>
                 </div>
-                {isAdmin && (
-                <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
-                  <Button className="cm-create-btn" onClick={handleCancelRegister}>매칭 등록 취소</Button>
-                </div>
-                )}
               </div>
             </div>
           </div>
