@@ -22,11 +22,6 @@ const rankColor = {
   E: "gray"
 };
 const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
-const autoNames = [
-  "이서준", "김민지", "최시우", "박예린", "정도윤",
-  "한유진", "유하린", "신동윤", "노지민", "배도현"
-];
-const rankLevels = ["SS", "S", "A", "B", "C", "D", "E"];
 
 // 단식/복식 선택 모달 (자동 매칭 등록만)
 const SelectTypeModal = ({ open, onClose, onSelect }) => {
