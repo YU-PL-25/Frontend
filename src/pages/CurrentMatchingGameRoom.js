@@ -9,9 +9,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 const Badge = ({ children, color = "gray" }) => (
   <span className={`cm-badge cm-badge-${color}`}>{children}</span>
 );
+
 const Button = ({ children, className = "", ...props }) => (
   <button className={`cm-btn ${className}`} {...props}>{children}</button>
 );
+
 const rankColor = {
   SS: "purple",
   S: "red",
@@ -21,6 +23,7 @@ const rankColor = {
   D: "blue",
   E: "gray"
 };
+
 const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
 
 // 단식/복식 선택 모달 (자동 매칭 등록만)
@@ -47,7 +50,6 @@ const GameResultModal = ({
 }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
-
   const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
   const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
 
@@ -150,6 +152,7 @@ export default function CurrentMatchingGameRoom() {
   const { userId: currentUserId } = JSON.parse(
     localStorage.getItem('user') || '{}'
   );
+
   const [isAdmin, setIsAdmin] = useState(false);
   const fetchManualWaitlist = useCallback(async () => {
     try {
@@ -577,12 +580,14 @@ export default function CurrentMatchingGameRoom() {
           onClose={() => setModalTypeOpen(false)}
           onSelect={handleAddWaitlistByType}
         />
+
         <GameResultModal
           visible={modalOpen}
           room={modalRoom}
           onClose={() => setModalOpen(false)}
           onFinishGame={handleFinishGame}
         />
+        
         {isAdmin ? (
           <div style={{ display: "flex", justifyContent: "center", margin: "3px 0" }}>
             <Button
