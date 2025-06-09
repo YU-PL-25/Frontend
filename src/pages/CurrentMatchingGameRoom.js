@@ -69,7 +69,7 @@ const GameResultModal = ({
         </div>
         <div className="cm-modal-teams">
           <div className="cm-modal-team">
-            <h4>내 팀</h4>
+            <h4>A 팀</h4>
             {myTeam.map(user => (
               <div key={user.id} className="cm-modal-player-row">
                 <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
@@ -90,7 +90,7 @@ const GameResultModal = ({
             </div>
           </div>
           <div className="cm-modal-team">
-            <h4>상대 팀</h4>
+            <h4>B 팀</h4>
             {opponentTeam.map(user => (
               <div key={user.id} className="cm-modal-player-row">
                 <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
