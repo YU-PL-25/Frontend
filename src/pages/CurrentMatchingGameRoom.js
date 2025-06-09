@@ -335,28 +335,45 @@ export default function CurrentMatchingGameRoom() {
 
   const handleManualMatchCancel = () => setSelected([]);
 
-  const handleStartAutoMatch = () => {
-    ["Singles", "Doubles"].forEach(gameType => {
-      const filtered = autoWaitlist.filter(p => p.gameType === gameType);
-      const maxPlayers = gameType === "Singles" ? 2 : 4;
-      if (filtered.length >= maxPlayers) {
-        setGameRooms(prev => [
-          ...prev,
-          {
-            id: `auto-${Date.now()}`,
-            courtName: "영남대학교 체육관",
-            gameType,
-            players: filtered.slice(0, maxPlayers),
-            maxPlayers,
-            status: "Ready",
-            createdBy: "자동매칭",
-            createdAt: new Date(),
-            isMine: false
+  const handleStartAutoMatch = async () => {
+    try {
+      const response = await axios.post(
+        `/api/match/auto/games/${roomId}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json'
           }
-        ]);
-        setAutoWaitlist(prev => prev.filter(p => !filtered.slice(0, maxPlayers).map(x => x.id).includes(p.id)));
-      }
-    });
+        }
+      );
+
+      const { userIds, gameId, date, time } = response.data;
+
+      const matchedPlayers = autoWaitlist.filter(p =>
+        userIds.includes(p.id) || userIds.includes(Number(p.id))
+      );
+
+      const gameType = userIds.length === 2 ? 'Singles' : 'Doubles';
+
+      const newGame = {
+        id: gameId,
+        courtName,
+        gameType,
+        players: matchedPlayers,
+        maxPlayers: userIds.length,
+        status: 'Ready',
+        createdBy: '자동매칭',
+        createdAt: new Date(`${date}T${time}`),
+        isMine: false
+      };
+
+      setGameRooms(prev => [...prev, newGame]);
+      setAutoWaitlist(prev => prev.filter(p => !userIds.includes(p.id)));
+      alert('자동 매칭이 완료되었습니다.');
+    } catch (error) {
+      console.error('자동 매칭 요청 실패', error);
+      alert('자동 매칭 중 오류가 발생했습니다.');
+    }
   };
 
   const handleFinishGame = (myScore, opponentScore) => {
