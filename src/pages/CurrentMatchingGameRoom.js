@@ -200,33 +200,22 @@ export default function CurrentMatchingGameRoom() {
     if (!roomId) return;
 
     axios
-      .get('/api/game-room')
+      .get(`/api/game-room/${roomId}/game-list`)
       .then(res => {
-        const rooms = res.data?.data || res.data;
-        const room  = rooms.find(r =>
-          String(r.gameRoomId ?? r.id) === String(roomId)
-        );
-
-        if (room) {
-          setHeaderTitle(room.title || '');
-          setCourtName(room.location?.courtName || room.courtName || '');
-          setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
-          setGameRooms(room.games ?? []);
-          setIsAdmin(Number(room.createdBy?.userId) === Number(currentUserId));
-        } else {
-          setHeaderTitle('');
-          setCourtName('');
-          setCourtAddr('');
-          setGameRooms([]);
-          setIsAdmin(false);
-        }
+        const room = res.data.data;
+        setHeaderTitle(room.title || '');
+        setCourtName(room.locationName || '');
+        setCourtAddr(room.locationAddress || '');
+        setGameRooms(room.games || []);
+        setIsAdmin(Number(room.managerId) === Number(currentUserId));
       })
       .catch(err => {
-        console.error('ROOM INFO LOAD ERROR', err);
+        console.error('게임방 정보 조회 실패', err);
         setHeaderTitle('');
         setCourtName('');
         setCourtAddr('');
         setGameRooms([]);
+        setIsAdmin(false);
       });
 
     fetchManualWaitlist();
