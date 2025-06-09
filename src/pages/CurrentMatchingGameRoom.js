@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
-import { MapPin, Clock, Users, UserPlus, Plus, X } from "lucide-react";
+import { MapPin, Clock, Users, UserPlus, X } from "lucide-react";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -369,23 +369,6 @@ export default function CurrentMatchingGameRoom() {
     alert(`게임이 종료되었습니다!\n내 팀: ${myScore}점\n상대 팀: ${opponentScore}점`);
   };
 
-  const handleCreateRoom = () => {
-    setGameRooms(prev => [
-      ...prev,
-      {
-        id: `room${Date.now()}`,
-        courtName: "영남대학교 체육관",
-        gameType: "Doubles",
-        players: [],
-        maxPlayers: 4,
-        status: "Waiting",
-        createdBy: "You",
-        createdAt: new Date(),
-        isMine: true
-      }
-    ]);
-  };
-
   return (
     <div className="cm-current-matching-wrapper">
       <Header />
@@ -430,12 +413,6 @@ export default function CurrentMatchingGameRoom() {
                   <Users style={{ width: 18, height: 18, marginRight: 5 }} />
                   <span>진행 중인 게임</span>
                   <Badge color="gray">{gameRooms.length}</Badge>
-                  {isAdmin && (
-                    <Button className="cm-create-btn" onClick={handleCreateRoom}>
-                      <Plus style={{ width: 16, height: 16, marginRight: 5 }} />
-                      게임방 생성
-                    </Button>
-                  )}
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
                 {gameRooms.map(room => (
