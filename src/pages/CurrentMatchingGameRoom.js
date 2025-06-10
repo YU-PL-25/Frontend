@@ -479,8 +479,12 @@ export default function CurrentMatchingGameRoom() {
                     <span>수동 대기자 명단</span>
                     <Badge color="gray">{manualWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                      <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelManualRegister}>매칭 등록 취소</Button>
+                      {!isAdmin && (
+                        <>
+                          <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
+                          <Button className="cm-create-btn" onClick={handleCancelManualRegister}>매칭 등록 취소</Button>
+                        </>
+                      )}
                     </div>
                   </div>
                   {isAdmin && (
@@ -546,8 +550,12 @@ export default function CurrentMatchingGameRoom() {
                     <span>자동 대기자 명단</span>
                     <Badge color="gray">{autoWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                      <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelAutoRegister}>매칭 등록 취소</Button>
+                      {!isAdmin && (
+                        <>
+                          <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
+                          <Button className="cm-create-btn" onClick={handleCancelAutoRegister}>매칭 등록 취소</Button>
+                        </>
+                      )}
                     </div>
                   </div>
                   {isAdmin && (
