@@ -556,3 +556,7 @@ html, body, #root, .cm-current-matching-wrapper {
 .cm-modal-doubles:hover {
   background-color: #8e158a;
 }
+
+.cm-game-start-btn {
+  margin-left: 10px;
+}
