@@ -258,27 +258,6 @@ export default function CurrentMatchingGameRoom() {
     fetchGamelist();
   }, [roomId, currentUserId, fetchManualWaitlist, fetchAutoWaitlist, fetchGamelist]);
 
-  // 방장만 내보내기
-  const handleRemovePlayer = (roomId, playerId) => {
-    setGames(prev =>
-      prev.map(room => {
-        if (room.id === roomId && room.isMine) {
-          const removed = room.players.find(p => p.id === playerId);
-          if (removed) {
-            if (removed.type === "manual") setManualWaitlist(prev => [...prev, removed]);
-            else setAutoWaitlist(prev => [...prev, removed]);
-          }
-          return {
-            ...room,
-            players: room.players.filter(p => p.id !== playerId),
-            status: "Waiting"
-          };
-        }
-        return room;
-      })
-    );
-  };
-
   // 수동 매칭 대기열 등록
   const handleManualRegister = async () => {
     try {
@@ -501,11 +480,6 @@ export default function CurrentMatchingGameRoom() {
                           <Badge color={rankColor[player.rankLevel]}>
                             {player.rankLevel}
                           </Badge>
-                          {room.isMine && (
-                            <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
-                              내보내기
-                            </Button>
-                          )}
                         </div>
                       ))}
                       <Button className="cm-join-btn"
