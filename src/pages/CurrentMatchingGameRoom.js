@@ -56,18 +56,11 @@ const GameResultModal = ({ visible, onClose, room, onResultSaved, submitGameResu
   const [opponentScore, setOpponentScore] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // 팀 분리
-  // 백엔드에서 team 정보를 제공하지 않는 경우, 아래 로직을 사용
-  const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
-  const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
-
-  // 백엔드에서 team 정보를 제공하는 경우, 아래 로직을 사용
-  // const myTeam = room?.players?.filter(p => p.team === "TEAM_A") || [];
-  // const opponentTeam = room?.players?.filter(p => p.team === "TEAM_B") || [];
+  const myTeam = room?.players?.filter(p => p.team === "TEAM_A") || [];
+  const opponentTeam = room?.players?.filter(p => p.team === "TEAM_B") || [];
 
   if (!visible || !room) return null;
 
-  // 대표자 추출
   const userId = myTeam[0]?.id;
   const opponentId = opponentTeam[0]?.id;
 
