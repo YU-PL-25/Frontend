@@ -543,9 +543,30 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  // 게임 종료 처리
   const handleFinishGame = (myScore, opponentScore) => {
     alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
+  };
+
+  // 게임 종료
+  const handleGameComplete = async (gameId) => {
+    try {
+      const res = await axios.patch(
+        `/api/game/${gameId}/complete`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data.message || "게임이 종료되었습니다.");
+      await fetchGamelist(); // 상태 갱신
+    } catch (e) {
+      if (e.response && e.response.data && e.response.data.error) {
+        alert(e.response.data.error);
+      } else {
+        alert("게임 종료 처리 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -648,10 +669,18 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "진행중" && (
                         <Button className="cm-join-btn cm-game-finish-btn"
                           onClick={() => {
+                            handleGameComplete(room.gameId);
+                          }}>
+                          게임 종료
+                        </Button>
+                      )}
+                      {room.status === "종료됨" && (
+                        <Button className="cm-join-btn cm-game-result-btn"
+                          onClick={() => {
                             setModalRoom(room);
                             setModalOpen(true);
                           }}>
-                          게임 종료
+                          점수 입력
                         </Button>
                       )}
                     </div>
