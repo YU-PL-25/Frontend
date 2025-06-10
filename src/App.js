@@ -15,7 +15,7 @@ import Community from './pages/Community';
 import MyPage from './pages/MyPage';
 import MatchHistory from './pages/MatchHistory';
 import CurrentMatchingGameRoom from './pages/CurrentMatchingGameRoom';
-import PreMatchingGameRoom from './pages/PreMatchingGameRoom';
+//import PreMatchingGameRoom from './pages/PreMatchingGameRoom';
 // GameRoomDetail은 당분간 사용 안 함 (불필요하면 import만 남겨둬도 됨)
 
 function App() {
@@ -38,7 +38,7 @@ function App() {
         <Route path="/mypage/match-history" element={<MatchHistory />} />
 
         {/* 사전매칭 방 상세 */}
-        <Route path="/pre-matching/gameroom/:roomId" element={<PreMatchingGameRoom />} />
+        {/*<Route path="/pre-matching/gameroom/:roomId" element={<PreMatchingGameRoom />} />*/}
 
         {/* 현장매칭 방 상세 */}
         <Route path="/current-matching/gameroom/:roomId" element={<CurrentMatchingGameRoom />} />
