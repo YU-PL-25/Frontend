@@ -326,7 +326,6 @@ export default function CurrentMatchingGameRoom() {
       setCourtAddr(room.locationAddress || '');
       setIsAdmin(Number(room.managerId) === Number(currentUserId));
 
-      // 게임 목록 처리
       const parsedGames = (room.games || []).map(game => ({
         id: game.gameId,
         courtName: room.locationName,
@@ -338,7 +337,6 @@ export default function CurrentMatchingGameRoom() {
           type: 'unknown'
         })),
         maxPlayers: game.players.length,
-        //status: game.status === "ONGOING" ? "Ready" : "Waiting",
         status: game.status === "WAITING"
           ? "대기중"
           : game.status === "ONGOING"
@@ -523,6 +521,28 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
+  // 게임 시작
+  const handleStartGame = async (gameId) => {
+    try {
+      const res = await axios.patch(
+        `/api/game/${gameId}/start`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data.message || "게임이 시작되었습니다.");
+      await fetchGamelist(); // 상태 갱신
+    } catch (e) {
+      if (e.response && e.response.data && e.response.data.error) {
+        alert(e.response.data.error);
+      } else {
+        alert("게임 시작 중 오류가 발생했습니다.");
+      }
+    }
+  };
+
   // 게임 종료 처리
   const handleFinishGame = (myScore, opponentScore) => {
     alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
@@ -620,8 +640,7 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "대기중" && (
                         <Button className="cm-join-btn cm-game-start-btn"
                           onClick={() => {
-                            // setModalRoom(room);
-                            // setModalOpen(true);
+                            handleStartGame(room.id);
                           }}>
                           게임 시작
                         </Button>
