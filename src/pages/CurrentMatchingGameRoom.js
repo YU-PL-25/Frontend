@@ -50,21 +50,53 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
   );
 };
 
-// 게임 결과 입력 모달
-const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
+// 게임 점수 입력 모달
+const GameResultModal = ({ visible, onClose, room, onResultSaved, submitGameResult }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
-  const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
-  const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
+  const [saving, setSaving] = useState(false);
+
+  const myTeam = room?.players?.filter(p => p.team === "TEAM_A") || [];
+  const opponentTeam = room?.players?.filter(p => p.team === "TEAM_B") || [];
 
   if (!visible || !room) return null;
+
+  const userId = myTeam[0]?.id;
+  const opponentId = opponentTeam[0]?.id;
+
+  const handleSubmit = async () => {
+    if (myScore === "" || opponentScore === "") {
+      alert("양팀 점수를 모두 입력하세요.");
+      return;
+    }
+    if (!userId || !opponentId) {
+      alert("팀 대표자를 찾을 수 없습니다.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await submitGameResult({
+        gameId: room.gameId,
+        userId,
+        opponentId,
+        scoreTeamA: Number(myScore),
+        scoreTeamB: Number(opponentScore)
+      });
+      if (onResultSaved) onResultSaved();
+      onClose();
+    } catch (e) {
+      // 이미 alert 처리됨
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="cm-modal-bg">
       <div className="cm-modal-content">
         <div className="cm-modal-header">
           <span role="img" aria-label="search" style={{fontSize:18}}>🔍</span>
-          <b style={{marginLeft: 7}}>경기 상세 정보</b>
+          <b style={{marginLeft: 7}}>경기 결과 입력</b>
           <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
         </div>
         <div className="cm-modal-detail">
@@ -90,6 +122,7 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
                 min={0}
                 onChange={e => setMyScore(e.target.value)}
                 style={{width: 55, marginLeft: 4}}
+                disabled={saving}
               />
             </div>
           </div>
@@ -111,6 +144,7 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
                 min={0}
                 onChange={e => setOpponentScore(e.target.value)}
                 style={{width: 55, marginLeft: 4}}
+                disabled={saving}
               />
             </div>
           </div>
@@ -118,20 +152,121 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
         <div className="cm-modal-footer">
           <Button
             className="cm-finish-btn"
-            onClick={() => {
-              if (myScore === "" || opponentScore === "") {
-                alert("양팀 점수를 모두 입력하세요.");
-                return;
-              }
-              onFinishGame(myScore, opponentScore);
-              onClose();
-            }}
-          >게임 종료</Button>
+            onClick={handleSubmit}
+            disabled={saving}
+          >{saving ? "저장 중..." : "결과 저장"}</Button>
           <Button
             className="cm-close-btn"
             onClick={onClose}
             style={{marginLeft:10, background:"#ececec", color:"#222"}}
+            disabled={saving}
           >닫기</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 팀 설정 모달
+const TeamSettingModal = ({ visible, onClose, players, onSetTeams, gameId }) => {
+  const [teamA, setTeamA] = useState([]);
+  const [teamB, setTeamB] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    // 초기화: 모든 플레이어를 팀A로
+    if (visible && players) {
+      setTeamA(players.map(p => p.id));
+      setTeamB([]);
+    }
+  }, [visible, players]);
+
+  const handleTogglePlayer = (id) => {
+    if (teamA.includes(id)) {
+      setTeamA(teamA.filter(pid => pid !== id));
+      setTeamB([...teamB, id]);
+    } else {
+      setTeamB(teamB.filter(pid => pid !== id));
+      setTeamA([...teamA, id]);
+    }
+  };
+
+  const handleAssignTeams = async () => {
+    if (teamA.length === 0 || teamB.length === 0) {
+      alert("A팀과 B팀에 모두 최소 1명 이상 있어야 합니다.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const teamAssignments = [
+        ...teamA.map(userId => ({ userId: Number(userId), team: "TEAM_A" })),
+        ...teamB.map(userId => ({ userId: Number(userId), team: "TEAM_B" })),
+      ];
+      await axios.patch(
+        `/api/game/${gameId}/team`,
+        teamAssignments,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert("팀 배정이 완료되었습니다.");
+      if (onSetTeams) onSetTeams(teamA, teamB);
+      onClose();
+    } catch (e) {
+      if (e.response && e.response.data && typeof e.response.data === "string") {
+        alert(e.response.data);
+      } else {
+        alert("팀 배정 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="cm-modal-bg">
+      <div className="cm-modal-content">
+        <div className="cm-modal-header">
+          <b>팀 설정</b>
+          <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
+        </div>
+        <div className="cm-team-modal-row" style={{ margin: '24px 0' }}>
+          <div className="cm-team-modal-col">
+            <h4>A 팀</h4>
+            {players.filter(p => teamA.includes(p.id)).map(user => (
+              <div key={user.id} className="cm-modal-player-row" style={{ cursor: 'pointer' }} onClick={() => handleTogglePlayer(user.id)}>
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>{user.rankLevel}</Badge>
+              </div>
+            ))}
+          </div>
+          <div className="cm-team-modal-col">
+            <h4>B 팀</h4>
+            {players.filter(p => teamB.includes(p.id)).map(user => (
+              <div key={user.id} className="cm-modal-player-row" style={{ cursor: 'pointer' }} onClick={() => handleTogglePlayer(user.id)}>
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>{user.rankLevel}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="cm-modal-footer">
+          <Button
+            className="cm-finish-btn"
+            onClick={handleAssignTeams}
+            disabled={saving}
+          >{saving ? "저장 중..." : "팀 확정"}</Button>
+          <Button
+            className="cm-close-btn"
+            onClick={onClose}
+            style={{ marginLeft: 10, background: "#ececec", color: "#222" }}
+            disabled={saving}
+          >취소</Button>
         </div>
       </div>
     </div>
@@ -153,6 +288,8 @@ export default function CurrentMatchingGameRoom() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [teamModalRoomId, setTeamModalRoomId] = useState(null);
   const { userId: currentUserId } = JSON.parse(localStorage.getItem('user') || '{}');
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -218,19 +355,18 @@ export default function CurrentMatchingGameRoom() {
       setCourtAddr(room.locationAddress || '');
       setIsAdmin(Number(room.managerId) === Number(currentUserId));
 
-      // 게임 목록 처리
       const parsedGames = (room.games || []).map(game => ({
-        id: game.gameId,
+        gameId: game.gameId,
         courtName: room.locationName,
         gameType: game.players.length === 2 ? 'Singles' : 'Doubles',
         players: game.players.map(player => ({
           id: player.userId,
           name: player.nickname,
           rankLevel: player.rank,
+          team: player.team || null,
           type: 'unknown'
         })),
         maxPlayers: game.players.length,
-        //status: game.status === "ONGOING" ? "Ready" : "Waiting",
         status: game.status === "WAITING"
           ? "대기중"
           : game.status === "ONGOING"
@@ -415,10 +551,80 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  // 게임 종료 처리
-  const handleFinishGame = (myScore, opponentScore) => {
-    alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
+  // 게임 시작
+  const handleStartGame = async (gameId) => {
+    try {
+      const res = await axios.patch(
+        `/api/game/${gameId}/start`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data.message || "게임이 시작되었습니다.");
+      await fetchGamelist(); // 상태 갱신
+    } catch (e) {
+      if (e.response && e.response.data && e.response.data.error) {
+        alert(e.response.data.error);
+      } else {
+        alert("게임 시작 중 오류가 발생했습니다.");
+      }
+    }
   };
+
+  // 게임 종료
+  const handleGameComplete = async (gameId) => {
+    try {
+      const res = await axios.patch(
+        `/api/game/${gameId}/complete`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data.message || "게임이 종료되었습니다.");
+      await fetchGamelist();
+      await fetchManualWaitlist();
+      await fetchAutoWaitlist();
+    } catch (e) {
+      if (e.response && e.response.data && e.response.data.error) {
+        alert(e.response.data.error);
+      } else {
+        alert("게임 종료 처리 중 오류가 발생했습니다.");
+      }
+    }
+  };
+
+  // 점수 입력
+  async function submitGameResult({ gameId, userId, opponentId, scoreTeamA, scoreTeamB }) {
+    try {
+      const res = await axios.post(
+        '/api/game/result',
+        {
+          gameId,
+          userId,
+          opponentId,
+          scoreTeamA,
+          scoreTeamB,
+          completed: true
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data || "경기 결과가 정상 반영되었습니다.");
+    } catch (e) {
+      if (e.response && e.response.data) {
+        alert(e.response.data);
+      } else {
+        alert("경기 결과 입력 중 오류가 발생했습니다.");
+      }
+      throw e;
+    }
+  }
 
   return (
     <div className="cm-current-matching-wrapper">
@@ -467,7 +673,7 @@ export default function CurrentMatchingGameRoom() {
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
                 {games.map(room => (
-                  <div key={room.id} className="cm-game-room-box">
+                  <div key={room.gameId} className="cm-game-room-box">
                     <div className="cm-room-header-row">
                       <div>
                         <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
@@ -502,8 +708,9 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "대기중" && (
                         <Button className="cm-join-btn cm-set-team-btn"
                           onClick={() => {
-                            // setModalRoom(room);
-                            // setModalOpen(true);
+                            setModalRoom(room);
+                            setTeamModalRoomId(room.gameId);
+                            setTeamModalOpen(true);
                           }}>
                           팀 설정
                         </Button>
@@ -511,8 +718,7 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "대기중" && (
                         <Button className="cm-join-btn cm-game-start-btn"
                           onClick={() => {
-                            // setModalRoom(room);
-                            // setModalOpen(true);
+                            handleStartGame(room.gameId);
                           }}>
                           게임 시작
                         </Button>
@@ -520,10 +726,18 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "진행중" && (
                         <Button className="cm-join-btn cm-game-finish-btn"
                           onClick={() => {
+                            handleGameComplete(room.gameId);
+                          }}>
+                          게임 종료
+                        </Button>
+                      )}
+                      {room.status === "종료됨" && (
+                        <Button className="cm-join-btn cm-game-result-btn"
+                          onClick={() => {
                             setModalRoom(room);
                             setModalOpen(true);
                           }}>
-                          게임 종료
+                          점수 입력
                         </Button>
                       )}
                     </div>
@@ -664,7 +878,22 @@ export default function CurrentMatchingGameRoom() {
           visible={modalOpen}
           room={modalRoom}
           onClose={() => setModalOpen(false)}
-          onFinishGame={handleFinishGame}
+          onResultSaved={() => {
+            fetchGamelist();
+            fetchManualWaitlist();
+            fetchAutoWaitlist();
+          }}
+          submitGameResult={submitGameResult}
+        />
+
+        <TeamSettingModal
+          visible={teamModalOpen}
+          onClose={() => setTeamModalOpen(false)}
+          players={modalRoom?.players || []}
+          gameId={teamModalRoomId}
+          onSetTeams={(teamA, teamB) => {
+            fetchGamelist();
+          }}
         />
         
         {isAdmin ? (

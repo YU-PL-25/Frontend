@@ -13,8 +13,8 @@ function MatchHistory() {
   const itemsPerPage = 15;
 
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      axios.get(`/api/users/${user.id}/game-history`, {
+    if (isAuthenticated && user?.userId) {
+      axios.get(`/api/users/${user.userId}/game-history`, {
         withCredentials: true
       })
         .then(res => {
