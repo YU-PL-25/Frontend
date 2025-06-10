@@ -2,17 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
-import { MapPin, Clock, Users, UserPlus, X } from "lucide-react";
+import { MapPin, Clock, Users, X } from "lucide-react";
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-
-const Badge = ({ children, color = "gray" }) => (
-  <span className={`cm-badge cm-badge-${color}`}>{children}</span>
-);
-
-const Button = ({ children, className = "", ...props }) => (
-  <button className={`cm-btn ${className}`} {...props}>{children}</button>
-);
 
 const rankColor = {
   SS: "purple",
@@ -24,7 +16,20 @@ const rankColor = {
   E: "gray"
 };
 
-const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
+const gameTypeLabel = { 
+  Singles: "단식", 
+  Doubles: "복식" 
+};
+
+// 뱃지 공통 컴포넌트
+const Badge = ({ children, color = "gray" }) => (
+  <span className={`cm-badge cm-badge-${color}`}>{children}</span>
+);
+
+// 버튼 공통 컴포넌트
+const Button = ({ children, className = "", ...props }) => (
+  <button className={`cm-btn ${className}`} {...props}>{children}</button>
+);
 
 // 단식/복식 선택 모달 (자동 매칭 등록만)
 const SelectTypeModal = ({ open, onClose, onSelect }) => {
@@ -37,17 +42,16 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
           <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 26, marginBottom: 18 }}>
-          <Button onClick={() => { onSelect('Singles'); }} style={{fontWeight:700}}>단식</Button>
-          <Button onClick={() => { onSelect('Doubles'); }}>복식</Button>
+          <Button className="cm-modal-singles" onClick={() => { onSelect('Singles'); }}>단식</Button>
+          <Button className="cm-modal-doubles" onClick={() => { onSelect('Doubles'); }}>복식</Button>
         </div>
       </div>
     </div>
   );
 };
 
-const GameResultModal = ({
-  visible, onClose, room, onFinishGame
-}) => {
+// 게임 결과 입력 모달
+const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
   const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
@@ -69,7 +73,7 @@ const GameResultModal = ({
         </div>
         <div className="cm-modal-teams">
           <div className="cm-modal-team">
-            <h4>내 팀</h4>
+            <h4>A 팀</h4>
             {myTeam.map(user => (
               <div key={user.id} className="cm-modal-player-row">
                 <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
@@ -90,7 +94,7 @@ const GameResultModal = ({
             </div>
           </div>
           <div className="cm-modal-team">
-            <h4>상대 팀</h4>
+            <h4>B 팀</h4>
             {opponentTeam.map(user => (
               <div key={user.id} className="cm-modal-player-row">
                 <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
@@ -134,7 +138,7 @@ const GameResultModal = ({
   );
 };
 
-// ======= 본문 =======
+// 본문
 export default function CurrentMatchingGameRoom() {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
@@ -142,23 +146,26 @@ export default function CurrentMatchingGameRoom() {
   const [headerTitle, setHeaderTitle] = useState('');
   const [courtName, setCourtName]   = useState('');
   const [courtAddr, setCourtAddr]   = useState(''); 
-  const [gameRooms, setGameRooms] = useState([]);
+  const [games, setGames] = useState([]);
   const [manualWaitlist, setManualWaitlist] = useState([]);
   const [autoWaitlist, setAutoWaitlist] = useState([]);
   const [selected, setSelected] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
-  const { userId: currentUserId } = JSON.parse(
-    localStorage.getItem('user') || '{}'
-  );
-
+  const { userId: currentUserId } = JSON.parse(localStorage.getItem('user') || '{}');
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // 수동 매칭 대기자 목록 조회
   const fetchManualWaitlist = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/match/manual/queue-users?roomId=${roomId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const res = await axios.get(
+        `/api/match/manual/queue-users?roomId=${roomId}`, 
+        { 
+          headers: { 'Content-Type': 'application/json' }, 
+          withCredentials: true
+        }
+      );
       const queued = res.data?.queuedUsers || [];
       const formatted = queued.map(user => ({
         id: user.userId,
@@ -172,11 +179,16 @@ export default function CurrentMatchingGameRoom() {
     }
   }, [roomId]);
 
+  // 자동 매칭 대기자 목록 조회
   const fetchAutoWaitlist = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/match/auto/queue-users?roomId=${roomId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const res = await axios.get(
+        `/api/match/auto/queue-users?roomId=${roomId}`,
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true 
+        }
+      );
       const queued = res.data?.queuedUsers || [];
       const formatted = queued.map(user => ({
         id: user.userId,
@@ -191,75 +203,78 @@ export default function CurrentMatchingGameRoom() {
     }
   }, [roomId]);
 
+  // 매칭된 게임 목록 조회
+    const fetchGamelist = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/game-room/${roomId}/game-list`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+      });
+
+      const room = res.data.data;
+
+      setHeaderTitle(room.title || '');
+      setCourtName(room.locationName || '');
+      setCourtAddr(room.locationAddress || '');
+      setIsAdmin(Number(room.managerId) === Number(currentUserId));
+
+      // 게임 목록 처리
+      const parsedGames = (room.games || []).map(game => ({
+        id: game.gameId,
+        courtName: room.locationName,
+        gameType: game.players.length === 2 ? 'Singles' : 'Doubles',
+        players: game.players.map(player => ({
+          id: player.userId,
+          name: player.nickname,
+          rankLevel: player.rank,
+          type: 'unknown'
+        })),
+        maxPlayers: game.players.length,
+        //status: game.status === "ONGOING" ? "Ready" : "Waiting",
+        status: game.status === "WAITING"
+          ? "대기중"
+          : game.status === "ONGOING"
+          ? "진행중"
+          : game.status === "FINISHED"
+          ? "종료됨"
+          : "알수없음",
+        createdBy: "자동매칭",
+        createdAt: new Date(`${game.date}T${game.time}`),
+        isMine: Number(room.managerId) === Number(currentUserId)
+      }));
+
+      setGames(parsedGames);
+    } catch (error) {
+      console.error('게임 목록 조회 실패', error);
+      setGames([]);
+    }
+  }, [roomId, currentUserId]);
+
+  // 현재 시간 업데이트
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // 게임방 정보 조회
   useEffect(() => {
     if (!roomId) return;
 
-    axios
-      .get('/api/game-room')
-      .then(res => {
-        const rooms = res.data?.data || res.data;
-        const room  = rooms.find(r =>
-          String(r.gameRoomId ?? r.id) === String(roomId)
-        );
-
-        if (room) {
-          setHeaderTitle(room.title || '');
-          setCourtName(room.location?.courtName || room.courtName || '');
-          setCourtAddr(room.location?.courtAddress || room.courtAddress || '');
-          setGameRooms(room.games ?? []);
-          setIsAdmin(Number(room.createdBy?.userId) === Number(currentUserId));
-        } else {
-          setHeaderTitle('');
-          setCourtName('');
-          setCourtAddr('');
-          setGameRooms([]);
-          setIsAdmin(false);
-        }
-      })
-      .catch(err => {
-        console.error('ROOM INFO LOAD ERROR', err);
-        setHeaderTitle('');
-        setCourtName('');
-        setCourtAddr('');
-        setGameRooms([]);
-      });
-
     fetchManualWaitlist();
     fetchAutoWaitlist();
-  }, [roomId, currentUserId, fetchManualWaitlist, fetchAutoWaitlist]);
+    fetchGamelist();
+  }, [roomId, currentUserId, fetchManualWaitlist, fetchAutoWaitlist, fetchGamelist]);
 
-  // 방장만 내보내기
-  const handleRemovePlayer = (roomId, playerId) => {
-    setGameRooms(prev =>
-      prev.map(room => {
-        if (room.id === roomId && room.isMine) {
-          const removed = room.players.find(p => p.id === playerId);
-          if (removed) {
-            if (removed.type === "manual") setManualWaitlist(prev => [...prev, removed]);
-            else setAutoWaitlist(prev => [...prev, removed]);
-          }
-          return {
-            ...room,
-            players: room.players.filter(p => p.id !== playerId),
-            status: "Waiting"
-          };
-        }
-        return room;
-      })
-    );
-  };
-
+  // 수동 매칭 대기열 등록
   const handleManualRegister = async () => {
     try {
       await axios.post(
         `/api/match/manual/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
         {},
-        { headers: { 'Content-Type': 'application/json' } }
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
       );
       alert('수동 매칭 큐에 등록되었습니다.');
       await fetchManualWaitlist();
@@ -271,6 +286,55 @@ export default function CurrentMatchingGameRoom() {
   
   const handleAutoRegister = () => setModalTypeOpen(true);
 
+  // 수동 매칭 대기열 등록 취소
+  const handleCancelManualRegister = async () => {
+    try {
+      await axios.delete(
+        `/api/match/manual/queue?userId=${currentUserId}`,
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert('수동 매칭 등록이 취소되었습니다.');
+      await fetchManualWaitlist();
+    } catch (error) {
+      console.error('수동 매칭 등록 취소 실패', error);
+      alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 수동 매칭 생성
+  const handleManualMatchCreate = async () => {
+    if (selected.length !== 2 && selected.length !== 4) {
+      alert("2명 또는 4명을 선택해야 매칭이 가능합니다.");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `/api/match/manual/games/${roomId}?requesterId=${currentUserId}`,
+        { userIds: selected },
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+
+      alert("수동 매칭이 성공적으로 완료되었습니다.");
+      setSelected([]);
+      await fetchManualWaitlist(); 
+      await fetchGamelist();    
+    } catch (error) {
+      console.error("수동 매칭 실패", error);
+      alert("수동 매칭 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 수동 매칭 선택 취소
+  const handleManualMatchCancel = () => setSelected([]);
+
+  // 자동 매칭 대기열 등록
   const handleAddWaitlistByType = async (gameType) => {
     const requiredMatchCount = gameType === 'Singles' ? 2 : 4;
 
@@ -278,10 +342,9 @@ export default function CurrentMatchingGameRoom() {
       await axios.post(
         `/api/match/auto/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
         { requiredMatchCount },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
         }
       );
       alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
@@ -293,48 +356,16 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  // 수동 매칭(체크박스 선택): 2명=단식, 4명=복식
-  const handleManualMatchCreate = () => {
-    if (selected.length !== 2 && selected.length !== 4) return;
-    const gameType = selected.length === 2 ? "Singles" : "Doubles";
-    const players = manualWaitlist.filter(p => selected.includes(p.id));
-    const newPlayers = players.map(p => ({ ...p, gameType })); // 방 내에는 타입 부여
-    setGameRooms(prev => [
-      ...prev,
-      {
-        id: `manual-${Date.now()}`,
-        courtName: "영남대학교 체육관",
-        gameType,
-        players: newPlayers,
-        maxPlayers: gameType === "Singles" ? 2 : 4,
-        status: "Ready",
-        createdBy: "You",
-        createdAt: new Date(),
-        isMine: true
-      }
-    ]);
-    setManualWaitlist(prev => prev.filter(p => !selected.includes(p.id)));
-    setSelected([]);
-  };
-
-  const handleCancelManualRegister = async () => {
-    try {
-      await axios.delete(`/api/match/manual/queue?userId=${currentUserId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      alert('수동 매칭 등록이 취소되었습니다.');
-      await fetchManualWaitlist();
-    } catch (error) {
-      console.error('수동 매칭 등록 취소 실패', error);
-      alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
-    }
-  };
-
+  // 자동 매칭 대기열 등록 취소
   const handleCancelAutoRegister = async () => {
     try {
-      await axios.delete(`/api/match/auto/queue?userId=${currentUserId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await axios.delete(
+        `/api/match/auto/queue?userId=${currentUserId}`, 
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true 
+        }
+    );
       alert('자동 매칭 등록이 취소되었습니다.');
       fetchAutoWaitlist();
     } catch (error) {
@@ -343,34 +374,50 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  const handleManualMatchCancel = () => setSelected([]);
+  // 자동 매칭 생성
+  const handleStartAutoMatch = async () => {
+    try {
+      const response = await axios.post(
+        `/api/match/auto/games/${roomId}`,
+        {},
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
 
-  const handleStartAutoMatch = () => {
-    ["Singles", "Doubles"].forEach(gameType => {
-      const filtered = autoWaitlist.filter(p => p.gameType === gameType);
-      const maxPlayers = gameType === "Singles" ? 2 : 4;
-      if (filtered.length >= maxPlayers) {
-        setGameRooms(prev => [
-          ...prev,
-          {
-            id: `auto-${Date.now()}`,
-            courtName: "영남대학교 체육관",
-            gameType,
-            players: filtered.slice(0, maxPlayers),
-            maxPlayers,
-            status: "Ready",
-            createdBy: "자동매칭",
-            createdAt: new Date(),
-            isMine: false
-          }
-        ]);
-        setAutoWaitlist(prev => prev.filter(p => !filtered.slice(0, maxPlayers).map(x => x.id).includes(p.id)));
-      }
-    });
+      const { userIds, gameId, date, time } = response.data;
+
+      const matchedPlayers = autoWaitlist.filter(p =>
+        userIds.includes(p.id) || userIds.includes(Number(p.id))
+      );
+
+      const gameType = userIds.length === 2 ? 'Singles' : 'Doubles';
+
+      const newGame = {
+        id: gameId,
+        courtName,
+        gameType,
+        players: matchedPlayers,
+        maxPlayers: userIds.length,
+        status: 'Ready',
+        createdBy: '자동매칭',
+        createdAt: new Date(`${date}T${time}`),
+        isMine: false
+      };
+
+      setGames(prev => [...prev, newGame]);
+      setAutoWaitlist(prev => prev.filter(p => !userIds.includes(p.id)));
+      alert('자동 매칭이 완료되었습니다.');
+    } catch (error) {
+      console.error('자동 매칭 요청 실패', error);
+      alert('자동 매칭 중 오류가 발생했습니다.');
+    }
   };
 
+  // 게임 종료 처리
   const handleFinishGame = (myScore, opponentScore) => {
-    alert(`게임이 종료되었습니다!\n내 팀: ${myScore}점\n상대 팀: ${opponentScore}점`);
+    alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
   };
 
   return (
@@ -411,22 +458,31 @@ export default function CurrentMatchingGameRoom() {
 
             {/* 좌우 패널 */}
             <div className="cm-main-panel-grid">
-              {/* 왼쪽: 게임방 목록 */}
+              {/* 왼쪽: 게임 목록 */}
               <div className="cm-game-rooms-card">
                 <div className="cm-panel-header">
                   <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                  <span>진행 중인 게임</span>
-                  <Badge color="gray">{gameRooms.length}</Badge>
+                  <span>매칭이 완료된 게임</span>
+                  <Badge color="gray">{games.length}</Badge>
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
-                {gameRooms.map(room => (
+                {games.map(room => (
                   <div key={room.id} className="cm-game-room-box">
                     <div className="cm-room-header-row">
                       <div>
                         <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
-                        <Badge color={room.status === "Ready" ? "black" : "gray"}>
-                          {room.status === "Ready" ? "매칭 완료" : "대기 중"}
-                        </Badge>
+                        {room.status === "대기중" && (
+                          <Badge color="yellow">대기 중</Badge>
+                        )}
+                        {room.status === "진행중" && (
+                          <Badge color="green">진행 중</Badge>
+                        )}
+                        {room.status === "종료됨" && (
+                          <Badge color="red">종료</Badge>
+                        )}
+                        {room.status === "알수없음" && (
+                          <Badge color="black">알수없음</Badge>
+                        )}
                       </div>
                       <span className="cm-room-player-count">
                         {room.players.length}/{room.maxPlayers} 명
@@ -440,21 +496,36 @@ export default function CurrentMatchingGameRoom() {
                           <Badge color={rankColor[player.rankLevel]}>
                             {player.rankLevel}
                           </Badge>
-                          {room.isMine && (
-                            <Button className="cm-remove-btn" onClick={() => handleRemovePlayer(room.id, player.id)}>
-                              내보내기
-                            </Button>
-                          )}
                         </div>
                       ))}
-                      <Button className="cm-join-btn"
-                        onClick={() => {
-                          setModalRoom(room);
-                          setModalOpen(true);
-                        }}>
-                        <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
-                        조회
-                      </Button>
+                      {/* 상태별 버튼 */}
+                      {room.status === "대기중" && (
+                        <Button className="cm-join-btn cm-set-team-btn"
+                          onClick={() => {
+                            // setModalRoom(room);
+                            // setModalOpen(true);
+                          }}>
+                          팀 설정
+                        </Button>
+                      )}
+                      {room.status === "대기중" && (
+                        <Button className="cm-join-btn cm-game-start-btn"
+                          onClick={() => {
+                            // setModalRoom(room);
+                            // setModalOpen(true);
+                          }}>
+                          게임 시작
+                        </Button>
+                      )}
+                      {room.status === "진행중" && (
+                        <Button className="cm-join-btn cm-game-finish-btn"
+                          onClick={() => {
+                            setModalRoom(room);
+                            setModalOpen(true);
+                          }}>
+                          게임 종료
+                        </Button>
+                      )}
                     </div>
                     <div className="cm-room-created-at">
                       {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
@@ -472,8 +543,12 @@ export default function CurrentMatchingGameRoom() {
                     <span>수동 대기자 명단</span>
                     <Badge color="gray">{manualWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                      <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelManualRegister}>매칭 등록 취소</Button>
+                      {!isAdmin && (
+                        <>
+                          <Button className="cm-create-btn" onClick={handleManualRegister}>수동 매칭 등록</Button>
+                          <Button className="cm-create-btn" onClick={handleCancelManualRegister}>매칭 등록 취소</Button>
+                        </>
+                      )}
                     </div>
                   </div>
                   {isAdmin && (
@@ -539,8 +614,12 @@ export default function CurrentMatchingGameRoom() {
                     <span>자동 대기자 명단</span>
                     <Badge color="gray">{autoWaitlist.length}</Badge>
                     <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-                      <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
-                      <Button className="cm-create-btn" onClick={handleCancelAutoRegister}>매칭 등록 취소</Button>
+                      {!isAdmin && (
+                        <>
+                          <Button className="cm-create-btn" onClick={handleAutoRegister}>자동 매칭 등록</Button>
+                          <Button className="cm-create-btn" onClick={handleCancelAutoRegister}>매칭 등록 취소</Button>
+                        </>
+                      )}
                     </div>
                   </div>
                   {isAdmin && (
@@ -594,7 +673,10 @@ export default function CurrentMatchingGameRoom() {
               className="cm-delete-button"
               onClick={async () => {
                 try {
-                  await axios.delete(`/api/game-room/${roomId}`);
+                  await axios.delete(
+                    `/api/game-room/${roomId}`,
+                    { withCredentials: true }
+                  );
                   alert("게임방이 삭제되었습니다.");
                   navigate("/current-matching");
                 } catch (error) {
@@ -612,7 +694,10 @@ export default function CurrentMatchingGameRoom() {
               className="cm-exit-button"
               onClick={async () => {
                 try {
-                  await axios.delete(`/api/users/${currentUserId}/game-room`);
+                  await axios.delete(`
+                    /api/users/${currentUserId}/game-room`,
+                    { withCredentials: true }
+                  );
                   alert("게임방에서 나갔습니다.");
                   navigate("/current-matching");
                 } catch (error) {

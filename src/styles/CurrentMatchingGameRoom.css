@@ -539,3 +539,24 @@ html, body, #root, .cm-current-matching-wrapper {
 .cm-exit-button:hover {
   background-color: #ff4749;
 }
+
+.cm-modal-singles, 
+.cm-modal-doubles {
+  padding: 10px 16px;
+  background-color: #AF1AAA;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cm-modal-singles:hover, 
+.cm-modal-doubles:hover {
+  background-color: #8e158a;
+}
+
+.cm-game-start-btn {
+  margin-left: 10px;
+}

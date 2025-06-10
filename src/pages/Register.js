@@ -167,7 +167,9 @@ function Register() {
             <select id="gameType" name="gameType" value={form.gameType} onChange={handleChange} required>
               <option value="">선택</option>
               <option value="단식">단식</option>
-              <option value="복식">복식</option>
+              <option value="혼합복식">혼합복식</option>
+              <option value="남자복식">남자복식</option>
+              <option value="여자복식">여자복식</option>
             </select>
 
             <div className="step-btn-group">
