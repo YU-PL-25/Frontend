@@ -399,9 +399,9 @@ html, body, #root, .cm-current-matching-wrapper {
 
 .cm-modal-footer {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 8px;
+  justify-content: center; /* 중앙 정렬로 변경 */
+  gap: 10px;
+  margin-top: 24px;
 }
 
 .cm-finish-btn {
@@ -559,4 +559,106 @@ html, body, #root, .cm-current-matching-wrapper {
 
 .cm-game-start-btn {
   margin-left: 10px;
+}
+
+.cm-modal-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cm-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 420px;
+  position: relative;
+}
+
+.cm-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.cm-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 0;
+}
+
+.cm-modal-content h4 {
+  margin: 0 0 10px 0;
+  font-size: 17px;
+  color: #6930c3;
+}
+
+.cm-modal-player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.cm-modal-player-row:hover {
+  background: #f5f3ff;
+}
+
+.cm-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ececec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #6930c3;
+  font-size: 15px;
+}
+
+.cm-modal-footer {
+  display: flex;
+  justify-content: center; /* 중앙 정렬로 변경 */
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.cm-team-modal-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 170px;
+  text-align: center;
+}
+
+.cm-team-modal-col h4 {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.cm-team-modal-col .cm-modal-player-row {
+  justify-content: center;
+}
+
+.cm-team-modal-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
 }

@@ -138,6 +138,79 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
   );
 };
 
+// 팀 설정 모달
+const TeamSettingModal = ({ visible, onClose, players, onSetTeams }) => {
+  const [teamA, setTeamA] = useState([]);
+  const [teamB, setTeamB] = useState([]);
+
+  useEffect(() => {
+    // 초기화: 모든 플레이어를 팀A로
+    if (visible && players) {
+      setTeamA(players.map(p => p.id));
+      setTeamB([]);
+    }
+  }, [visible, players]);
+
+  const handleTogglePlayer = (id) => {
+    if (teamA.includes(id)) {
+      setTeamA(teamA.filter(pid => pid !== id));
+      setTeamB([...teamB, id]);
+    } else {
+      setTeamB(teamB.filter(pid => pid !== id));
+      setTeamA([...teamA, id]);
+    }
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="cm-modal-bg">
+      <div className="cm-modal-content">
+        <div className="cm-modal-header">
+          <b>팀 설정</b>
+          <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
+        </div>
+        <div style={{ display: 'flex', gap: 24, margin: '24px 0' }}>
+          <div className="cm-team-modal-col">
+            <h4>A 팀</h4>
+            {players.filter(p => teamA.includes(p.id)).map(user => (
+              <div key={user.id} className="cm-modal-player-row" style={{ cursor: 'pointer' }} onClick={() => handleTogglePlayer(user.id)}>
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>{user.rankLevel}</Badge>
+              </div>
+            ))}
+          </div>
+          <div className="cm-team-modal-col">
+            <h4>B 팀</h4>
+            {players.filter(p => teamB.includes(p.id)).map(user => (
+              <div key={user.id} className="cm-modal-player-row" style={{ cursor: 'pointer' }} onClick={() => handleTogglePlayer(user.id)}>
+                <span className="cm-avatar">{user.name.split(" ").map(n => n[0]).join("")}</span>
+                <span>{user.name}</span>
+                <Badge color={rankColor[user.rankLevel]}>{user.rankLevel}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="cm-modal-footer">
+          <Button
+            className="cm-finish-btn"
+            onClick={() => {
+              onSetTeams(teamA, teamB);
+              onClose();
+            }}
+          >팀 확정</Button>
+          <Button
+            className="cm-close-btn"
+            onClick={onClose}
+            style={{ marginLeft: 10, background: "#ececec", color: "#222" }}
+          >취소</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // 본문
 export default function CurrentMatchingGameRoom() {
   const { id: roomId } = useParams();
@@ -153,6 +226,7 @@ export default function CurrentMatchingGameRoom() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
   const { userId: currentUserId } = JSON.parse(localStorage.getItem('user') || '{}');
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -502,8 +576,8 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "대기중" && (
                         <Button className="cm-join-btn cm-set-team-btn"
                           onClick={() => {
-                            // setModalRoom(room);
-                            // setModalOpen(true);
+                            setModalRoom(room);
+                            setTeamModalOpen(true);
                           }}>
                           팀 설정
                         </Button>
@@ -665,6 +739,16 @@ export default function CurrentMatchingGameRoom() {
           room={modalRoom}
           onClose={() => setModalOpen(false)}
           onFinishGame={handleFinishGame}
+        />
+
+        <TeamSettingModal
+          visible={teamModalOpen}
+          onClose={() => setTeamModalOpen(false)}
+          players={modalRoom?.players || []}
+          onSetTeams={(teamA, teamB) => {
+            // 팀 정보 저장 또는 서버로 전송
+            console.log('A팀:', teamA, 'B팀:', teamB);
+          }}
         />
         
         {isAdmin ? (
