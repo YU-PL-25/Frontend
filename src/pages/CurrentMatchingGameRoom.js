@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/CurrentMatchingGameRoom.css';
-import { MapPin, Clock, Users, UserPlus, X } from "lucide-react";
+import { MapPin, Clock, Users, X } from "lucide-react";
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -499,18 +499,31 @@ export default function CurrentMatchingGameRoom() {
                         </div>
                       ))}
                       {/* 상태별 버튼 */}
-                      {(room.status === "진행중" || room.status === "종료됨") && (
-                        <Button className="cm-join-btn"
+                      {room.status === "대기중" && (
+                        <Button className="cm-join-btn cm-set-team-btn"
+                          onClick={() => {
+                            // setModalRoom(room);
+                            // setModalOpen(true);
+                          }}>
+                          팀 설정
+                        </Button>
+                      )}
+                      {room.status === "대기중" && (
+                        <Button className="cm-join-btn cm-game-start-btn"
+                          onClick={() => {
+                            // setModalRoom(room);
+                            // setModalOpen(true);
+                          }}>
+                          게임 시작
+                        </Button>
+                      )}
+                      {room.status === "진행중" && (
+                        <Button className="cm-join-btn cm-game-finish-btn"
                           onClick={() => {
                             setModalRoom(room);
                             setModalOpen(true);
                           }}>
-                          조회
-                        </Button>
-                      )}
-                      {room.status === "대기중" && (
-                        <Button className="cm-join-btn" disabled>
-                          대기 중
+                          게임 종료
                         </Button>
                       )}
                     </div>
