@@ -327,7 +327,7 @@ export default function CurrentMatchingGameRoom() {
       setIsAdmin(Number(room.managerId) === Number(currentUserId));
 
       const parsedGames = (room.games || []).map(game => ({
-        id: game.gameId,
+        gameId: game.gameId,
         courtName: room.locationName,
         gameType: game.players.length === 2 ? 'Singles' : 'Doubles',
         players: game.players.map(player => ({
@@ -595,7 +595,7 @@ export default function CurrentMatchingGameRoom() {
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
                 {games.map(room => (
-                  <div key={room.id} className="cm-game-room-box">
+                  <div key={room.gameId} className="cm-game-room-box">
                     <div className="cm-room-header-row">
                       <div>
                         <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
@@ -631,7 +631,7 @@ export default function CurrentMatchingGameRoom() {
                         <Button className="cm-join-btn cm-set-team-btn"
                           onClick={() => {
                             setModalRoom(room);
-                            setTeamModalRoomId(room.id);
+                            setTeamModalRoomId(room.gameId);
                             setTeamModalOpen(true);
                           }}>
                           팀 설정
@@ -640,7 +640,7 @@ export default function CurrentMatchingGameRoom() {
                       {room.status === "대기중" && (
                         <Button className="cm-join-btn cm-game-start-btn"
                           onClick={() => {
-                            handleStartGame(room.id);
+                            handleStartGame(room.gameId);
                           }}>
                           게임 시작
                         </Button>
