@@ -6,6 +6,8 @@ import '../styles/PreMatching.css';
 import logo from '../assets/shuttleplay_main_logo.png';
 import AutoGameRoomMatching from './AutoGameRoomMatching';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // 🟣 모달 컴포넌트 (구장/동네 생성 전환 가능, 버튼 중앙정렬 & 고정 너비)
 function PreMatchingCreateRoomModal({ open, onClose, onCreate }) {
@@ -159,6 +161,7 @@ function generateGameRooms(selectedMode, selectedVenue, selectedDate, selectedTi
 }
 
 function PreMatching() {
+  const navigate = useNavigate();
   const [step, setStep] = useState('selectMode');
   const [selectedMode, setSelectedMode] = useState('구장매칭');
   const [selectedVenue, setSelectedVenue] = useState(sampleVenues[0].name);
@@ -252,6 +255,8 @@ function PreMatching() {
     setFiltered(true);
     setFilterKey(prev => prev + 1);
     setStep('filter');
+    localStorage.setItem('selectedRoom', JSON.stringify(newRoom));
+    navigate(`/current-matching/gameroom/${newRoom.id}`);
   };
 
   const getBtnClass = (active) =>
