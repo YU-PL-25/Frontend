@@ -230,7 +230,14 @@ export default function CurrentMatchingGameRoom() {
           type: 'unknown'
         })),
         maxPlayers: game.players.length,
-        status: game.status === "ONGOING" ? "Ready" : "Waiting",
+        //status: game.status === "ONGOING" ? "Ready" : "Waiting",
+        status: game.status === "WAITING"
+          ? "대기중"
+          : game.status === "ONGOING"
+          ? "진행중"
+          : game.status === "FINISHED"
+          ? "종료됨"
+          : "알수없음",
         createdBy: "자동매칭",
         createdAt: new Date(`${game.date}T${game.time}`),
         isMine: Number(room.managerId) === Number(currentUserId)
@@ -464,9 +471,18 @@ export default function CurrentMatchingGameRoom() {
                     <div className="cm-room-header-row">
                       <div>
                         <Badge color="gray">{gameTypeLabel[room.gameType]}</Badge>
-                        <Badge color={room.status === "Ready" ? "black" : "gray"}>
-                          {room.status === "Ready" ? "매칭 완료" : "대기 중"}
-                        </Badge>
+                        {room.status === "대기중" && (
+                          <Badge color="yellow">대기 중</Badge>
+                        )}
+                        {room.status === "진행중" && (
+                          <Badge color="green">진행 중</Badge>
+                        )}
+                        {room.status === "종료됨" && (
+                          <Badge color="red">종료</Badge>
+                        )}
+                        {room.status === "알수없음" && (
+                          <Badge color="black">알수없음</Badge>
+                        )}
                       </div>
                       <span className="cm-room-player-count">
                         {room.players.length}/{room.maxPlayers} 명
@@ -482,14 +498,21 @@ export default function CurrentMatchingGameRoom() {
                           </Badge>
                         </div>
                       ))}
-                      <Button className="cm-join-btn"
-                        onClick={() => {
-                          setModalRoom(room);
-                          setModalOpen(true);
-                        }}>
-                        <UserPlus style={{ width: 14, height: 14, marginRight: 4 }} />
-                        조회
-                      </Button>
+                      {/* 상태별 버튼 */}
+                      {(room.status === "진행중" || room.status === "종료됨") && (
+                        <Button className="cm-join-btn"
+                          onClick={() => {
+                            setModalRoom(room);
+                            setModalOpen(true);
+                          }}>
+                          조회
+                        </Button>
+                      )}
+                      {room.status === "대기중" && (
+                        <Button className="cm-join-btn" disabled>
+                          대기 중
+                        </Button>
+                      )}
                     </div>
                     <div className="cm-room-created-at">
                       {room.createdBy} 님이 생성 · {room.createdAt.toLocaleTimeString()}
