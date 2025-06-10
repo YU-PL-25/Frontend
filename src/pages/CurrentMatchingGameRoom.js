@@ -139,9 +139,10 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
 };
 
 // 팀 설정 모달
-const TeamSettingModal = ({ visible, onClose, players, onSetTeams }) => {
+const TeamSettingModal = ({ visible, onClose, players, onSetTeams, gameId }) => {
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     // 초기화: 모든 플레이어를 팀A로
@@ -161,6 +162,39 @@ const TeamSettingModal = ({ visible, onClose, players, onSetTeams }) => {
     }
   };
 
+  const handleAssignTeams = async () => {
+    if (teamA.length === 0 || teamB.length === 0) {
+      alert("A팀과 B팀에 모두 최소 1명 이상 있어야 합니다.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const teamAssignments = [
+        ...teamA.map(userId => ({ userId: Number(userId), team: "TEAM_A" })),
+        ...teamB.map(userId => ({ userId: Number(userId), team: "TEAM_B" })),
+      ];
+      await axios.patch(
+        `/api/game/${gameId}/team`,
+        teamAssignments,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert("팀 배정이 완료되었습니다.");
+      if (onSetTeams) onSetTeams(teamA, teamB);
+      onClose();
+    } catch (e) {
+      if (e.response && e.response.data && typeof e.response.data === "string") {
+        alert(e.response.data);
+      } else {
+        alert("팀 배정 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!visible) return null;
 
   return (
@@ -170,7 +204,7 @@ const TeamSettingModal = ({ visible, onClose, players, onSetTeams }) => {
           <b>팀 설정</b>
           <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
         </div>
-        <div style={{ display: 'flex', gap: 24, margin: '24px 0' }}>
+        <div className="cm-team-modal-row" style={{ margin: '24px 0' }}>
           <div className="cm-team-modal-col">
             <h4>A 팀</h4>
             {players.filter(p => teamA.includes(p.id)).map(user => (
@@ -195,15 +229,14 @@ const TeamSettingModal = ({ visible, onClose, players, onSetTeams }) => {
         <div className="cm-modal-footer">
           <Button
             className="cm-finish-btn"
-            onClick={() => {
-              onSetTeams(teamA, teamB);
-              onClose();
-            }}
-          >팀 확정</Button>
+            onClick={handleAssignTeams}
+            disabled={saving}
+          >{saving ? "저장 중..." : "팀 확정"}</Button>
           <Button
             className="cm-close-btn"
             onClick={onClose}
             style={{ marginLeft: 10, background: "#ececec", color: "#222" }}
+            disabled={saving}
           >취소</Button>
         </div>
       </div>
@@ -227,6 +260,7 @@ export default function CurrentMatchingGameRoom() {
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
   const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [teamModalRoomId, setTeamModalRoomId] = useState(null);
   const { userId: currentUserId } = JSON.parse(localStorage.getItem('user') || '{}');
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -577,6 +611,7 @@ export default function CurrentMatchingGameRoom() {
                         <Button className="cm-join-btn cm-set-team-btn"
                           onClick={() => {
                             setModalRoom(room);
+                            setTeamModalRoomId(room.id);
                             setTeamModalOpen(true);
                           }}>
                           팀 설정
@@ -745,9 +780,8 @@ export default function CurrentMatchingGameRoom() {
           visible={teamModalOpen}
           onClose={() => setTeamModalOpen(false)}
           players={modalRoom?.players || []}
+          gameId={teamModalRoomId}
           onSetTeams={(teamA, teamB) => {
-            // 팀 정보 저장 또는 서버로 전송
-            console.log('A팀:', teamA, 'B팀:', teamB);
           }}
         />
         
