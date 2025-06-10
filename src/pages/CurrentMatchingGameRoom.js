@@ -37,8 +37,8 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
           <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 26, marginBottom: 18 }}>
-          <Button onClick={() => { onSelect('Singles'); }} style={{fontWeight:700}}>단식</Button>
-          <Button onClick={() => { onSelect('Doubles'); }}>복식</Button>
+          <Button className="cm-modal-singles" onClick={() => { onSelect('Singles'); }}>단식</Button>
+          <Button className="cm-modal-doubles" onClick={() => { onSelect('Doubles'); }}>복식</Button>
         </div>
       </div>
     </div>
@@ -156,9 +156,11 @@ export default function CurrentMatchingGameRoom() {
   const [isAdmin, setIsAdmin] = useState(false);
   const fetchManualWaitlist = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/match/manual/queue-users?roomId=${roomId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const res = await axios.get(
+        `/api/match/manual/queue-users?roomId=${roomId}`, 
+        { headers: { 'Content-Type': 'application/json' }}, 
+        {withCredentials: true}
+      );
       const queued = res.data?.queuedUsers || [];
       const formatted = queued.map(user => ({
         id: user.userId,
@@ -174,9 +176,11 @@ export default function CurrentMatchingGameRoom() {
 
   const fetchAutoWaitlist = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/match/auto/queue-users?roomId=${roomId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const res = await axios.get(
+        `/api/match/auto/queue-users?roomId=${roomId}`,
+        { headers: { 'Content-Type': 'application/json' } }, 
+        { withCredentials: true }
+      );
       const queued = res.data?.queuedUsers || [];
       const formatted = queued.map(user => ({
         id: user.userId,
@@ -200,7 +204,10 @@ export default function CurrentMatchingGameRoom() {
     if (!roomId) return;
 
     axios
-      .get(`/api/game-room/${roomId}/game-list`)
+      .get(
+        `/api/game-room/${roomId}/game-list`, 
+        { withCredentials: true }
+      )
       .then(res => {
         const room = res.data.data;
         setHeaderTitle(room.title || '');
@@ -248,7 +255,8 @@ export default function CurrentMatchingGameRoom() {
       await axios.post(
         `/api/match/manual/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
         {},
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
       );
       alert('수동 매칭 큐에 등록되었습니다.');
       await fetchManualWaitlist();
@@ -267,11 +275,8 @@ export default function CurrentMatchingGameRoom() {
       await axios.post(
         `/api/match/auto/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
         { requiredMatchCount },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
       );
       alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
       setModalTypeOpen(false);
@@ -293,9 +298,8 @@ export default function CurrentMatchingGameRoom() {
       await axios.post(
         `/api/match/manual/games/${roomId}?requesterId=${currentUserId}`,
         { userIds: selected },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
       );
 
       alert("수동 매칭이 성공적으로 완료되었습니다.");
@@ -309,9 +313,11 @@ export default function CurrentMatchingGameRoom() {
 
   const handleCancelManualRegister = async () => {
     try {
-      await axios.delete(`/api/match/manual/queue?userId=${currentUserId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await axios.delete(
+        `/api/match/manual/queue?userId=${currentUserId}`,
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
+      );
       alert('수동 매칭 등록이 취소되었습니다.');
       await fetchManualWaitlist();
     } catch (error) {
@@ -322,9 +328,11 @@ export default function CurrentMatchingGameRoom() {
 
   const handleCancelAutoRegister = async () => {
     try {
-      await axios.delete(`/api/match/auto/queue?userId=${currentUserId}`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await axios.delete(
+        `/api/match/auto/queue?userId=${currentUserId}`, 
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
+    );
       alert('자동 매칭 등록이 취소되었습니다.');
       fetchAutoWaitlist();
     } catch (error) {
@@ -340,11 +348,8 @@ export default function CurrentMatchingGameRoom() {
       const response = await axios.post(
         `/api/match/auto/games/${roomId}`,
         {},
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+        { headers: { 'Content-Type': 'application/json' } },
+        { withCredentials: true }
       );
 
       const { userIds, gameId, date, time } = response.data;
@@ -609,7 +614,10 @@ export default function CurrentMatchingGameRoom() {
               className="cm-delete-button"
               onClick={async () => {
                 try {
-                  await axios.delete(`/api/game-room/${roomId}`);
+                  await axios.delete(
+                    `/api/game-room/${roomId}`,
+                    { withCredentials: true }
+                  );
                   alert("게임방이 삭제되었습니다.");
                   navigate("/current-matching");
                 } catch (error) {
@@ -627,7 +635,10 @@ export default function CurrentMatchingGameRoom() {
               className="cm-exit-button"
               onClick={async () => {
                 try {
-                  await axios.delete(`/api/users/${currentUserId}/game-room`);
+                  await axios.delete(`
+                    /api/users/${currentUserId}/game-room`,
+                    { withCredentials: true }
+                  );
                   alert("게임방에서 나갔습니다.");
                   navigate("/current-matching");
                 } catch (error) {
