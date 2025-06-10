@@ -141,8 +141,10 @@ function CurrentMatching() {
                       <p>현재 인원: {room.participantCount ?? (room.participants?.length || 0)}명</p>
                       <p>
                         {room.locationName} · {room.locationAddress}
-                        {room.games?.[0]?.date && <> · {room.games[0].date}</>}
                       </p>
+                      <p></p>
+                      <p></p>
+                      <p>{room.games?.[0]?.date && <> {room.games[0].date}</>}</p>
                     </div>
                     <div className="cml-room-actions">
                       {alreadyJoined ? (
