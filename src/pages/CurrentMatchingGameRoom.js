@@ -476,7 +476,7 @@ export default function CurrentMatchingGameRoom() {
               <div className="cm-game-rooms-card">
                 <div className="cm-panel-header">
                   <Users style={{ width: 18, height: 18, marginRight: 5 }} />
-                  <span>진행 중인 게임</span>
+                  <span>매칭이 완료된 게임</span>
                   <Badge color="gray">{games.length}</Badge>
                 </div>
                 <div className="cm-panel-desc">기존 게임에 참가하거나 새 게임방을 만들 수 있습니다</div>
