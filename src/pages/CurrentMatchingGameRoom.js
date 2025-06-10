@@ -50,21 +50,60 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
   );
 };
 
-// 게임 결과 입력 모달
-const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
+// 게임 점수 입력 모달
+const GameResultModal = ({ visible, onClose, room, onResultSaved, submitGameResult }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // 팀 분리
+  // 백엔드에서 team 정보를 제공하지 않는 경우, 아래 로직을 사용
   const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
   const opponentTeam = room?.players?.slice(room.gameType === "Singles" ? 1 : 2) || [];
 
+  // 백엔드에서 team 정보를 제공하는 경우, 아래 로직을 사용
+  // const myTeam = room?.players?.filter(p => p.team === "TEAM_A") || [];
+  // const opponentTeam = room?.players?.filter(p => p.team === "TEAM_B") || [];
+
   if (!visible || !room) return null;
+
+  // 대표자 추출
+  const userId = myTeam[0]?.id;
+  const opponentId = opponentTeam[0]?.id;
+
+  const handleSubmit = async () => {
+    if (myScore === "" || opponentScore === "") {
+      alert("양팀 점수를 모두 입력하세요.");
+      return;
+    }
+    if (!userId || !opponentId) {
+      alert("팀 대표자를 찾을 수 없습니다.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await submitGameResult({
+        gameId: room.gameId,
+        userId,
+        opponentId,
+        scoreTeamA: Number(myScore),
+        scoreTeamB: Number(opponentScore)
+      });
+      if (onResultSaved) onResultSaved();
+      onClose();
+    } catch (e) {
+      // 이미 alert 처리됨
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="cm-modal-bg">
       <div className="cm-modal-content">
         <div className="cm-modal-header">
           <span role="img" aria-label="search" style={{fontSize:18}}>🔍</span>
-          <b style={{marginLeft: 7}}>경기 상세 정보</b>
+          <b style={{marginLeft: 7}}>경기 결과 입력</b>
           <Button className="cm-modal-close" onClick={onClose}><X size={18} /></Button>
         </div>
         <div className="cm-modal-detail">
@@ -90,6 +129,7 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
                 min={0}
                 onChange={e => setMyScore(e.target.value)}
                 style={{width: 55, marginLeft: 4}}
+                disabled={saving}
               />
             </div>
           </div>
@@ -111,6 +151,7 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
                 min={0}
                 onChange={e => setOpponentScore(e.target.value)}
                 style={{width: 55, marginLeft: 4}}
+                disabled={saving}
               />
             </div>
           </div>
@@ -118,19 +159,14 @@ const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
         <div className="cm-modal-footer">
           <Button
             className="cm-finish-btn"
-            onClick={() => {
-              if (myScore === "" || opponentScore === "") {
-                alert("양팀 점수를 모두 입력하세요.");
-                return;
-              }
-              onFinishGame(myScore, opponentScore);
-              onClose();
-            }}
-          >게임 종료</Button>
+            onClick={handleSubmit}
+            disabled={saving}
+          >{saving ? "저장 중..." : "결과 저장"}</Button>
           <Button
             className="cm-close-btn"
             onClick={onClose}
             style={{marginLeft:10, background:"#ececec", color:"#222"}}
+            disabled={saving}
           >닫기</Button>
         </div>
       </div>
@@ -334,6 +370,7 @@ export default function CurrentMatchingGameRoom() {
           id: player.userId,
           name: player.nickname,
           rankLevel: player.rank,
+          team: player.team || null,
           type: 'unknown'
         })),
         maxPlayers: game.players.length,
@@ -543,10 +580,6 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  const handleFinishGame = (myScore, opponentScore) => {
-    alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
-  };
-
   // 게임 종료
   const handleGameComplete = async (gameId) => {
     try {
@@ -559,7 +592,9 @@ export default function CurrentMatchingGameRoom() {
         }
       );
       alert(res.data.message || "게임이 종료되었습니다.");
-      await fetchGamelist(); // 상태 갱신
+      await fetchGamelist();
+      await fetchManualWaitlist();
+      await fetchAutoWaitlist();
     } catch (e) {
       if (e.response && e.response.data && e.response.data.error) {
         alert(e.response.data.error);
@@ -568,6 +603,35 @@ export default function CurrentMatchingGameRoom() {
       }
     }
   };
+
+  // 점수 입력
+  async function submitGameResult({ gameId, userId, opponentId, scoreTeamA, scoreTeamB }) {
+    try {
+      const res = await axios.post(
+        '/api/game/result',
+        {
+          gameId,
+          userId,
+          opponentId,
+          scoreTeamA,
+          scoreTeamB,
+          completed: true
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      alert(res.data || "경기 결과가 정상 반영되었습니다.");
+    } catch (e) {
+      if (e.response && e.response.data) {
+        alert(e.response.data);
+      } else {
+        alert("경기 결과 입력 중 오류가 발생했습니다.");
+      }
+      throw e;
+    }
+  }
 
   return (
     <div className="cm-current-matching-wrapper">
@@ -821,7 +885,12 @@ export default function CurrentMatchingGameRoom() {
           visible={modalOpen}
           room={modalRoom}
           onClose={() => setModalOpen(false)}
-          onFinishGame={handleFinishGame}
+          onResultSaved={() => {
+            fetchGamelist();
+            fetchManualWaitlist();
+            fetchAutoWaitlist();
+          }}
+          submitGameResult={submitGameResult}
         />
 
         <TeamSettingModal
@@ -830,6 +899,7 @@ export default function CurrentMatchingGameRoom() {
           players={modalRoom?.players || []}
           gameId={teamModalRoomId}
           onSetTeams={(teamA, teamB) => {
+            fetchGamelist();
           }}
         />
         
