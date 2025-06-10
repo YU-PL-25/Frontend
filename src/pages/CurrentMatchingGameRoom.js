@@ -6,14 +6,6 @@ import { MapPin, Clock, Users, UserPlus, X } from "lucide-react";
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const Badge = ({ children, color = "gray" }) => (
-  <span className={`cm-badge cm-badge-${color}`}>{children}</span>
-);
-
-const Button = ({ children, className = "", ...props }) => (
-  <button className={`cm-btn ${className}`} {...props}>{children}</button>
-);
-
 const rankColor = {
   SS: "purple",
   S: "red",
@@ -24,7 +16,20 @@ const rankColor = {
   E: "gray"
 };
 
-const gameTypeLabel = { Singles: "단식", Doubles: "복식" };
+const gameTypeLabel = { 
+  Singles: "단식", 
+  Doubles: "복식" 
+};
+
+// 뱃지 공통 컴포넌트
+const Badge = ({ children, color = "gray" }) => (
+  <span className={`cm-badge cm-badge-${color}`}>{children}</span>
+);
+
+// 버튼 공통 컴포넌트
+const Button = ({ children, className = "", ...props }) => (
+  <button className={`cm-btn ${className}`} {...props}>{children}</button>
+);
 
 // 단식/복식 선택 모달 (자동 매칭 등록만)
 const SelectTypeModal = ({ open, onClose, onSelect }) => {
@@ -45,9 +50,8 @@ const SelectTypeModal = ({ open, onClose, onSelect }) => {
   );
 };
 
-const GameResultModal = ({
-  visible, onClose, room, onFinishGame
-}) => {
+// 게임 결과 입력 모달
+const GameResultModal = ({ visible, onClose, room, onFinishGame }) => {
   const [myScore, setMyScore] = useState('');
   const [opponentScore, setOpponentScore] = useState('');
   const myTeam = room?.players?.slice(0, room.gameType === "Singles" ? 1 : 2) || [];
@@ -134,7 +138,7 @@ const GameResultModal = ({
   );
 };
 
-// ======= 본문 =======
+// 본문
 export default function CurrentMatchingGameRoom() {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
@@ -149,11 +153,10 @@ export default function CurrentMatchingGameRoom() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
   const [modalTypeOpen, setModalTypeOpen] = useState(false);
-  const { userId: currentUserId } = JSON.parse(
-    localStorage.getItem('user') || '{}'
-  );
-
+  const { userId: currentUserId } = JSON.parse(localStorage.getItem('user') || '{}');
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // 수동 매칭 대기자 목록 조회
   const fetchManualWaitlist = useCallback(async () => {
     try {
       const res = await axios.get(
@@ -174,6 +177,7 @@ export default function CurrentMatchingGameRoom() {
     }
   }, [roomId]);
 
+  // 자동 매칭 대기자 목록 조회
   const fetchAutoWaitlist = useCallback(async () => {
     try {
       const res = await axios.get(
@@ -195,11 +199,13 @@ export default function CurrentMatchingGameRoom() {
     }
   }, [roomId]);
 
+  // 현재 시간 업데이트
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // 게임방 정보 조회
   useEffect(() => {
     if (!roomId) return;
 
@@ -250,6 +256,7 @@ export default function CurrentMatchingGameRoom() {
     );
   };
 
+  // 수동 매칭 대기열 등록
   const handleManualRegister = async () => {
     try {
       await axios.post(
@@ -268,26 +275,23 @@ export default function CurrentMatchingGameRoom() {
   
   const handleAutoRegister = () => setModalTypeOpen(true);
 
-  const handleAddWaitlistByType = async (gameType) => {
-    const requiredMatchCount = gameType === 'Singles' ? 2 : 4;
-
+  // 수동 매칭 대기열 등록 취소
+  const handleCancelManualRegister = async () => {
     try {
-      await axios.post(
-        `/api/match/auto/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
-        { requiredMatchCount },
+      await axios.delete(
+        `/api/match/manual/queue?userId=${currentUserId}`,
         { headers: { 'Content-Type': 'application/json' } },
         { withCredentials: true }
       );
-      alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
-      setModalTypeOpen(false);
-      fetchAutoWaitlist();
+      alert('수동 매칭 등록이 취소되었습니다.');
+      await fetchManualWaitlist();
     } catch (error) {
-      console.error('자동 매칭 등록 실패', error);
-      alert('자동 매칭 등록 중 오류가 발생했습니다.');
+      console.error('수동 매칭 등록 취소 실패', error);
+      alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
     }
   };
 
-  // 수동 매칭(체크박스 선택): 2명=단식, 4명=복식
+  // 수동 매칭 생성
   const handleManualMatchCreate = async () => {
     if (selected.length !== 2 && selected.length !== 4) {
       alert("2명 또는 4명을 선택해야 매칭이 가능합니다.");
@@ -311,21 +315,30 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  const handleCancelManualRegister = async () => {
+  // 수동 매칭 선택 취소
+  const handleManualMatchCancel = () => setSelected([]);
+
+  // 자동 매칭 대기열 등록
+  const handleAddWaitlistByType = async (gameType) => {
+    const requiredMatchCount = gameType === 'Singles' ? 2 : 4;
+
     try {
-      await axios.delete(
-        `/api/match/manual/queue?userId=${currentUserId}`,
+      await axios.post(
+        `/api/match/auto/queue/gym?userId=${currentUserId}&roomId=${roomId}`,
+        { requiredMatchCount },
         { headers: { 'Content-Type': 'application/json' } },
         { withCredentials: true }
       );
-      alert('수동 매칭 등록이 취소되었습니다.');
-      await fetchManualWaitlist();
+      alert(`${gameType === "Singles" ? "단식" : "복식"}으로 자동 매칭 큐에 등록되었습니다.`);
+      setModalTypeOpen(false);
+      fetchAutoWaitlist();
     } catch (error) {
-      console.error('수동 매칭 등록 취소 실패', error);
-      alert('수동 매칭 등록 취소 중 오류가 발생했습니다.');
+      console.error('자동 매칭 등록 실패', error);
+      alert('자동 매칭 등록 중 오류가 발생했습니다.');
     }
   };
 
+  // 자동 매칭 대기열 등록 취소
   const handleCancelAutoRegister = async () => {
     try {
       await axios.delete(
@@ -341,8 +354,7 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
-  const handleManualMatchCancel = () => setSelected([]);
-
+  // 자동 매칭 생성
   const handleStartAutoMatch = async () => {
     try {
       const response = await axios.post(
@@ -381,8 +393,9 @@ export default function CurrentMatchingGameRoom() {
     }
   };
 
+  // 게임 종료 처리
   const handleFinishGame = (myScore, opponentScore) => {
-    alert(`게임이 종료되었습니다!\n내 팀: ${myScore}점\n상대 팀: ${opponentScore}점`);
+    alert(`게임이 종료되었습니다!\nA 팀: ${myScore}점\nB 팀: ${opponentScore}점`);
   };
 
   return (
@@ -423,7 +436,7 @@ export default function CurrentMatchingGameRoom() {
 
             {/* 좌우 패널 */}
             <div className="cm-main-panel-grid">
-              {/* 왼쪽: 게임방 목록 */}
+              {/* 왼쪽: 게임 목록 */}
               <div className="cm-game-rooms-card">
                 <div className="cm-panel-header">
                   <Users style={{ width: 18, height: 18, marginRight: 5 }} />
