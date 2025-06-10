@@ -134,13 +134,15 @@ function CurrentMatching() {
             <div className="cml-room-list">
               {currentRooms.map((room) => {
                 const alreadyJoined = room.participants?.some(p => p.userId === user?.userId);
-
                 return (
                   <div className="cml-room-card" key={room.gameRoomId}>
                     <div className="cml-room-info">
                       <h3>{room.title}</h3>
-                      <p>현재 인원: {room.participants?.length || 0}명</p>
-                      <p>{room.location?.courtName} · {room.location?.userLocation} · {room.date}</p>
+                      <p>현재 인원: {room.participantCount ?? (room.participants?.length || 0)}명</p>
+                      <p>
+                        {room.locationName} · {room.locationAddress}
+                        {room.games?.[0]?.date && <> · {room.games[0].date}</>}
+                      </p>
                     </div>
                     <div className="cml-room-actions">
                       {alreadyJoined ? (
