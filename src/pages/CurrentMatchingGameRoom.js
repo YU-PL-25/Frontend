@@ -275,7 +275,7 @@ const TeamSettingModal = ({ visible, onClose, players, onSetTeams, gameId }) => 
 
 // 본문
 export default function CurrentMatchingGameRoom() {
-  const { id: roomId } = useParams();
+  const { roomId } = useParams();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [headerTitle, setHeaderTitle] = useState('');
