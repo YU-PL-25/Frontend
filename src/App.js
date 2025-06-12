@@ -15,8 +15,7 @@ import Community from './pages/Community';
 import MyPage from './pages/MyPage';
 import MatchHistory from './pages/MatchHistory';
 import CurrentMatchingGameRoom from './pages/CurrentMatchingGameRoom';
-//import PreMatchingGameRoom from './pages/PreMatchingGameRoom';
-// GameRoomDetail은 당분간 사용 안 함 (불필요하면 import만 남겨둬도 됨)
+import PreMatchingGameRoom from './pages/PreMatchingGameRoom';
 
 function App() {
   return (
@@ -29,19 +28,15 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/register/success" element={<RegisterSuccess />} />
         <Route path="/pre-matching" element={<PreMatching />} />
+        <Route path="/pre-matching/gameroom/:roomId" element={<PreMatchingGameRoom />} />
         <Route path="/current-matching" element={<CurrentMatching />} />
+        <Route path="/current-matching/gameroom/:roomId" element={<CurrentMatchingGameRoom />} />
         <Route path="/competition" element={<Competition />} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/club" element={<Club />} />
         <Route path="/community" element={<Community />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mypage/match-history" element={<MatchHistory />} />
-
-        {/* 사전매칭 방 상세 */}
-        {/*<Route path="/pre-matching/gameroom/:roomId" element={<PreMatchingGameRoom />} />*/}
-
-        {/* 현장매칭 방 상세 */}
-        <Route path="/current-matching/gameroom/:roomId" element={<CurrentMatchingGameRoom />} />
 
         {/* (아래는 필요할 때만 잠깐 해제해서 사용)
         <Route path="/pre-matching/gameroom/:id" element={<GameRoomDetail />} />
